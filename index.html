@@ -359,6 +359,44 @@
         @keyframes lightPulse { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
         @keyframes spinObj { to { transform: rotate(360deg); } }
         
+        /* INSTAGRAM WATERMARK PATCH */
+        .ig-watermark {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            z-index: 80;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .ig-watermark:hover {
+            color: var(--gold-light);
+            opacity: 1;
+        }
+        .watermark-fixed {
+            position: absolute;
+            bottom: max(26px, calc(env(safe-area-inset-bottom) + 26px));
+            right: 18px;
+        }
+        #phone-app.is-scroll-mode .watermark-fixed {
+            display: none !important;
+        }
+        .watermark-flow-container {
+            display: none;
+        }
+        #phone-app.is-scroll-mode .watermark-flow-container {
+            display: block;
+            position: relative;
+            width: 100%;
+            text-align: center;
+            padding-top: 80px; /* Jarak dari konten terakhir */
+            padding-bottom: 20px;
+            z-index: 20;
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
@@ -378,6 +416,11 @@
             <div class="app-bg" id="main-bg"></div>
             <div class="light-streak"></div>
             <div id="flash-bang"></div>
+
+            <!-- WATERMARK: FIXED (CARD MODE) -->
+            <a href="https://www.instagram.com/fadkun.10/" target="_blank" rel="noopener noreferrer" class="ig-watermark watermark-fixed">
+                By Fadkun.10
+            </a>
 
             <!-- CARDS CONTAINER -->
             <div id="card-container">
@@ -501,6 +544,13 @@
                     </div>
                 </section>
                 
+                <!-- WATERMARK: FLOW (SCROLL MODE) -->
+                <div class="watermark-flow-container">
+                    <a href="https://www.instagram.com/fadkun.10/" target="_blank" rel="noopener noreferrer" class="ig-watermark">
+                        Instagram · Fadkun.10
+                    </a>
+                </div>
+
             </div>
 
             <div id="tutorial-ui">
