@@ -2,482 +2,966 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Birthday Night Invitation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     
-    <!-- Meta Tags untuk Pratinjau Link (WhatsApp, dll) -->
-    <meta property="og:title" content="Birthday Night Invitation 🪩✨">
-    <meta property="og:description" content="It's my birthday, and I'd love to celebrate it with you! Yuk, lihat undangannya.">
+    <!-- Open Graph / Link Preview Data -->
+    <meta property="og:title" content="BIRTHDAY NIGHT - You're Invited!">
+    <meta property="og:description" content="It's my birthday, and I'd love to celebrate it with you. Yuk, dress up dan nikmatin malamnya bareng-bareng!">
     <meta property="og:image" content="poster.png">
+    <meta property="og:url" content="https://undangan-ulang-tahun-kamu.com">
     <meta property="og:type" content="website">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-    
+
+    <title>Birthday Night - Premium Experience</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
     <style>
-        body, html {
-            margin: 0; padding: 0;
+        :root {
+            --gold-light: #F9E596;
+            --gold-primary: #D4AF37;
+            --gold-dark: #8C6D1F;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            
+            --bg-deep: #030305;
+            --text-main: #FFFFFF;
+            --text-dim: #A0A0A5;
+
+            /* Safe Area defaults */
+            --sa-top: env(safe-area-inset-top, 24px);
+            --sa-bottom: env(safe-area-inset-bottom, 24px);
+            --sa-left: env(safe-area-inset-left, 0px);
+            --sa-right: env(safe-area-inset-right, 0px);
+        }
+
+        /* 
+         * SCROLLBAR COMPLETELY HIDDEN 
+         * Scrolling will still work via touch/mousewheel
+         */
+        html, body, * {
+            -ms-overflow-style: none !important; /* IE and Edge */
+            scrollbar-width: none !important;    /* Firefox */
+        }
+        *::-webkit-scrollbar {
+            display: none !important;            /* Chrome, Safari, Opera */
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
-            background-color: #000; color: #ffffff;
-            overflow: hidden; height: 100vh; width: 100vw;
-        }
-        h1, h2, h3, .font-heading { font-family: 'Playfair Display', serif; }
-
-        .mobile-container {
-            max-width: 480px; margin: 0 auto; position: relative;
-            background: #050505; height: 100vh;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            overflow: hidden; perspective: 1500px;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            /* Body starts non-scrollable for Act 1-5 (Card Mode) */
+            overflow-y: hidden;
+            overscroll-behavior-y: none;
         }
 
-        .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0; visibility: hidden; z-index: 10;
-            background-color: #050505;
-            backface-visibility: hidden;
-            /* Efek masuk memantul 3D */
-            transform: rotateY(90deg) scale(0.4) translateZ(500px);
-            transition: transform 0.9s cubic-bezier(0.68, -0.6, 0.32, 1.6), opacity 0.8s, visibility 0.8s;
-        }
-        .page.active {
-            opacity: 1; visibility: visible; z-index: 20;
-            transform: rotateY(0deg) scale(1) translateZ(0);
-        }
-        .page.prev {
-            transform: rotateY(-90deg) scale(0.4) translateZ(500px);
-            opacity: 0; visibility: hidden; z-index: 10;
-        }
-
-        /* UI Progress Bar Story */
-        .story-progress-container {
-            position: absolute; top: 15px; left: 10px; right: 10px;
-            display: flex; gap: 5px; z-index: 50; pointer-events: none;
-        }
-        .story-bar {
-            flex: 1; height: 3px; background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px; overflow: hidden;
-        }
-        .story-bar-fill {
-            height: 100%; width: 0%; background: #D4AF37;
-            transition: width 0.3s ease;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .text-gold { color: #D4AF37; }
-        .glow-gold { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 0 20px rgba(212, 175, 55, 0.3); }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
         
-        @keyframes kenBurns {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
+        .gold-text {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 20px var(--gold-glow));
         }
-        .animate-bg { animation: kenBurns 15s alternate infinite ease-in-out; }
+
+        /* Asset Wrapper replacing Unicode Emojis */
+        .icon-asset {
+            display: inline-block;
+            vertical-align: middle;
+            height: 1.2em;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+        }
+
+        #atmosphere-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -5;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: scroll; /* Better for mobile performance */
+            animation: bgBreathe 20s infinite alternate ease-in-out;
+        }
+
+        #atmosphere-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(3,3,5,0.2) 0%, rgba(3,3,5,0.85) 70%, #030305 100%),
+                linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(3,3,5,0.95) 100%);
+            pointer-events: none;
+        }
+
+        .light-streak {
+            position: fixed;
+            width: 150vw;
+            height: 10vh;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+            filter: blur(40px);
+            z-index: -3;
+            transform: rotate(-35deg);
+            pointer-events: none;
+            animation: lightSweep 15s infinite linear;
+        }
+
+        /* Preloader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-deep);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s cubic-bezier(0.7, 0, 0.3, 1), visibility 1s;
+        }
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #opening-curtain {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-deep);
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 1s;
+            cursor: pointer;
+        }
+        #opening-curtain.opened {
+            transform: translateY(-100vh) scale(1.1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .opening-hint {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold-primary);
+            margin-top: 40px;
+            animation: bobbing 2s infinite ease-in-out;
+            padding: 15px 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 30px;
+            background: rgba(212, 175, 55, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        #app-container {
+            position: relative;
+            width: 100%;
+            /* min-height will adapt based on mode */
+            min-height: 100svh;
+            perspective: 2000px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #card-deck {
+            position: relative;
+            width: 100%;
+            height: 100svh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            /* Container transitions smoothly when switching modes */
+            transition: all 1s ease;
+        }
+
+        /* Card Base Styles */
+        .party-card {
+            position: absolute;
+            width: 90%;
+            /* Fluid width based on mobile */
+            max-width: 400px;
+            min-height: 60svh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            
+            /* Glassmorphism */
+            background: rgba(15, 15, 20, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            
+            /* Initial state */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateZ(-500px) translateY(100px) rotateX(15deg);
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1), 
+                        opacity 0.6s ease, visibility 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card-content {
+            transform: translateZ(30px); 
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .party-card.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateZ(0) translateY(0) rotateX(0);
+            z-index: 10;
+        }
+        .party-card.prev {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(200px) translateY(-150px) rotateX(-20deg);
+            z-index: 15;
+        }
+        .party-card.next {
+            opacity: 0.8;
+            visibility: visible;
+            pointer-events: none;
+            transform: translateZ(-100px) translateY(40px) rotateX(5deg);
+            z-index: 5;
+            filter: blur(2px) brightness(0.7);
+        }
+        .party-card.next-far {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-300px) translateY(80px) rotateX(10deg);
+            z-index: 1;
+        }
+
+        /* Huge background typography inside cards */
+        .huge-bg-text {
+            position: absolute;
+            font-size: clamp(4rem, 25vw, 8rem);
+            font-weight: 900;
+            color: rgba(255,255,255,0.03);
+            white-space: nowrap;
+            top: 10%;
+            left: -10%;
+            pointer-events: none;
+            z-index: 0;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: -5px;
+        }
+
+        .hero-photo-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/5;
+            margin: 0 auto 30px auto;
+            perspective: 1000px;
+        }
         
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .page.active .animate-content { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards; }
-        .delay-1 { animation-delay: 0.2s; opacity: 0; }
-        .delay-2 { animation-delay: 0.4s; opacity: 0; }
-        .delay-3 { animation-delay: 0.6s; opacity: 0; }
-
-        @keyframes pulseHint {
-            0%, 100% { opacity: 0.3; transform: translateX(0); }
-            50% { opacity: 0.8; transform: translateX(10px); }
-        }
-        .tap-hint { animation: pulseHint 2s infinite; }
-
-        /* Loading Screen Fix Anti Nyangkut */
-        #loading-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #050505; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
-        }
-        .loader {
-            width: 50px; height: 50px; border: 2px solid rgba(212, 175, 55, 0.2);
-            border-radius: 50%; border-top-color: #D4AF37;
-            animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .icon-emoji { width: 1.2em; height: 1.2em; display: inline-block; vertical-align: middle; margin: 0 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .icon-emoji-lg { width: 2em; height: 2em; }
-
-        .guide-avatar { animation: floatAvatar 3s ease-in-out infinite; }
-        @keyframes floatAvatar {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        .speech-bubble {
-            position: relative; transform-origin: bottom right;
-            animation: popBubble 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popBubble {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .speech-bubble::after {
-            content: ''; position: absolute; bottom: 0; right: -8px;
-            border-width: 10px 0 0 10px; border-style: solid;
-            border-color: transparent transparent transparent white;
+        .hero-photo-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+            transform: translateZ(40px);
         }
 
-        /* Sembunyikan scrollbar visual agar desain bersih */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        .hero-typography-overlap {
+            position: absolute;
+            bottom: -20px;
+            left: -10px;
+            font-size: clamp(3rem, 15vw, 5rem);
+            line-height: 0.85;
+            text-align: left;
+            z-index: 3;
+            transform: translateZ(70px);
+            text-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            pointer-events: none;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+
+        /* Premium Buttons */
+        .btn-luxe {
+            position: relative;
+            background: rgba(20, 20, 25, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--gold-primary);
+            color: var(--text-main);
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: clamp(0.85rem, 4vw, 1rem);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(212,175,55,0.1);
+            transition: all 0.3s ease;
+            /* Touch target optimization */
+            min-height: 50px;
+            width: 100%;
         }
+        
+        .btn-luxe:active { transform: scale(0.96); background: var(--gold-primary); color: #000; }
+
+        #mascot-layer {
+            position: fixed;
+            /* Safe area positioning - highly optimized for mobile portrait */
+            bottom: max(48px, calc(var(--sa-bottom) + 32px));
+            right: 15px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: none; /* Let clicks pass through empty space */
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.8s;
+        }
+
+        /* Mascot States */
+        #mascot-layer.pos-left { transform: translateX(calc(-100vw + 120px)); align-items: flex-start; }
+        #mascot-layer.pos-center { transform: translateX(-35vw) translateY(-10vh) scale(1.2); }
+        #mascot-layer.pos-hide { transform: translateY(150px) scale(0.8); opacity: 0; }
+
+        #mascot-img {
+            /* Responsive clamp for mobile screens */
+            width: clamp(75px, 22vw, 110px); 
+            height: auto;
+            pointer-events: auto;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.8));
+            animation: mascotBreathe 4s infinite ease-in-out;
+            transform-origin: bottom center;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.2s;
+        }
+        #mascot-img:active { filter: drop-shadow(0 5px 10px rgba(0,0,0,0.9)) brightness(0.8); transform: scale(0.9); }
+
+        /* Dark Premium Glass Bubble */
+        #mascot-bubble {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 16px;
+            border-radius: 20px 20px 0 20px;
+            color: var(--text-main);
+            font-size: clamp(0.75rem, 3.5vw, 0.9rem);
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 220px;
+            margin-bottom: 12px;
+            margin-right: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 15px rgba(255,255,255,0.05);
+            
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.8);
+            transform-origin: bottom right;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #mascot-layer.pos-left #mascot-bubble {
+            border-radius: 20px 20px 20px 0;
+            margin-right: 0; margin-left: 10px;
+            transform-origin: bottom left;
+        }
+
+        #mascot-bubble.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        #ui-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 900;
+            padding: var(--sa-top) var(--sa-right) var(--sa-bottom) var(--sa-left);
+        }
+
+        .progress-track {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: opacity 0.5s;
+        }
+
+        .progress-dot {
+            width: 3px;
+            height: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            transition: all 0.4s ease;
+        }
+        .progress-dot.active {
+            height: 35px;
+            background: var(--gold-primary);
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        #nav-controls {
+            position: absolute;
+            bottom: max(20px, calc(var(--sa-bottom) + 15px));
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+            transition: opacity 0.5s;
+        }
+
+        .nav-btn {
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-main);
+            width: 44px; /* Touch target optimized */
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .nav-btn:active { transform: scale(0.9); }
+        .nav-btn:disabled { opacity: 0; pointer-events: none; }
+
+        /* Flash Effect */
+        #grand-flash {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+        .particle { position: absolute; border-radius: 50%; opacity: 0; }
+
+        /* 
+         * When .is-scroll-mode is added to body, we break the 3D absolute 
+         * stack and let elements flow naturally downwards.
+         */
+        body.is-scroll-mode {
+            overflow-y: auto !important; /* Enable scrolling */
+            touch-action: pan-y;
+        }
+
+        body.is-scroll-mode #app-container {
+            align-items: flex-start; 
+            min-height: 100%;
+        }
+
+        body.is-scroll-mode #card-deck {
+            flex-direction: column;
+            justify-content: flex-start;
+            height: auto;
+            gap: 8vh; 
+            padding-top: 15vh;
+            /* CRUCIAL: Massive bottom space for safe scrolling past nav bars */
+            padding-bottom: max(250px, calc(var(--sa-bottom) + 200px)); 
+        }
+
+        body.is-scroll-mode .party-card {
+            position: relative; 
+            width: 100%; 
+            max-width: 100%; /* Take full mobile width */
+            min-height: auto; 
+            padding: 10vh 25px; /* Spacing between sections */
+            /* Strip the "card" look to blend into a single editorial page */
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: none;
+            box-shadow: none;
+            
+            /* Reset all 3D positioning */
+            transform: none !important; 
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+
+        body.is-scroll-mode #ui-layer { opacity: 0; }
+
+        /* Interactive micro-animations */
+        .interactive-obj { cursor: pointer; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .interactive-obj:active { transform: scale(0.8) rotate(-15deg); filter: brightness(1.5); }
+
+        @keyframes bgBreathe { 0% { transform: scale(1.02); } 100% { transform: scale(1.15); } }
+        @keyframes lightSweep { 0% { top: -20%; left: -50%; } 100% { top: 120%; left: 100%; } }
+        @keyframes mascotBreathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes bobbing { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(-8px); opacity: 1; } }
+        @keyframes spinObj { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <div id="app" class="mobile-container">
+    <div id="loader">
+        <h1 class="serif gold-text" style="font-size: 2rem; letter-spacing: 3px; animation: bobbing 2s infinite;">PREPARING</h1>
+    </div>
+
+    <!-- Background layers -->
+    <div id="atmosphere-layer"></div>
+    <div id="atmosphere-overlay"></div>
+    <div class="light-streak" style="top: 10%; left: -20%;"></div>
+    <div class="light-streak" style="top: 60%; width: 200vw; animation-delay: 5s;"></div>
+
+    <div id="grand-flash"></div>
+    <div id="particles"></div>
+
+    <!-- Act 01: The Curtain -->
+    <div id="opening-curtain">
+        <div style="text-align: center; padding: 20px;">
+            <h1 class="serif gold-text" style="font-size: clamp(2.5rem, 10vw, 4rem); margin-bottom: 10px; opacity: 0; transform: translateY(20px); transition: all 1s ease 0.5s;" id="open-title">YOU'RE INVITED</h1>
+            <div class="opening-hint" id="btn-open-envelope" style="opacity: 0; transition: opacity 1s ease 1.5s;">
+                TAP TO OPEN
+            </div>
+        </div>
+    </div>
+
+    <main id="app-container">
         
-        <!-- Loading Screen Cepat (Agar tidak error walau gambar belum ditaruh) -->
-        <div id="loading-screen">
-            <div class="loader mb-6"></div>
-            <h2 class="font-heading text-gold text-lg tracking-[0.2em] uppercase glow-gold">Preparing Night</h2>
-        </div>
-
-        <div id="story-ui" class="story-progress-container" style="display: none;">
-            <div class="story-bar"><div class="story-bar-fill" id="bar-0"></div></div>
-            <div class="story-bar"><div class="story-bar-fill" id="bar-1"></div></div>
-            <div class="story-bar"><div class="story-bar-fill" id="bar-2"></div></div>
-            <div class="story-bar"><div class="story-bar-fill" id="bar-3"></div></div>
-            <div class="story-bar"><div class="story-bar-fill" id="bar-4"></div></div>
-        </div>
-
-        <!-- MASKOT PEMANDU (Tanpa Border, Tanpa Kotak) -->
-        <div id="guide-container" class="absolute bottom-12 right-4 z-50 flex items-end gap-2 pointer-events-none" style="display: none; transform: translateY(150%); transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
-            <div class="speech-bubble bg-white text-black text-[11px] p-2.5 rounded-xl rounded-br-none shadow-2xl max-w-[130px] font-semibold mb-2">
-                <span id="guide-text">Selamat datang!</span>
-            </div>
-            <!-- Menggunakan w-24 (sekitar 90px) agar pas -->
-            <div class="guide-avatar w-[90px] h-[90px]">
-                <img src="maskot.png" alt="Guide" class="w-full h-full object-contain filter drop-shadow-[0_8px_15px_rgba(0,0,0,0.6)]">
-            </div>
-        </div>
-
-        <div class="page active" id="page-0">
-            <!-- Dekorasi diam di belakang -->
-            <div class="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none" style="background-image: url('background.png');"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black pointer-events-none"></div>
+        <div id="card-deck">
             
-            <!-- Area yang dijamin bisa discroll -->
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
-                <div class="relative w-full min-h-[101%] px-6 pt-[25vh] pb-[35vh] flex flex-col items-center">
-                    <div class="text-center flex flex-col items-center animate-content">
-                        <h3 class="text-xs tracking-[0.4em] text-gray-400 mb-4">YOU ARE INVITED</h3>
-                        <h1 class="font-heading text-5xl text-white mb-6 leading-tight drop-shadow-2xl">
-                            BIRTHDAY<br>
-                            <span class="text-gold glow-gold text-6xl">NIGHT</span>
-                        </h1>
-                        
-                        <div class="mt-16 flex flex-col items-center">
-                            <button id="btn-open" class="relative z-50 border border-gold text-gold font-bold py-3 px-8 rounded-full uppercase tracking-widest text-xs transition transform active:scale-95 bg-black bg-opacity-70 hover:bg-gold hover:text-black shadow-[0_0_15px_rgba(212,175,55,0.4)]">
-                                Tap To Open
-                            </button>
-                            <p class="text-[10px] text-gray-400 mt-6 tracking-widest tap-hint pointer-events-none">TAP KANAN UNTUK NEXT ➔</p>
+            <!-- SECTION 1: TITLE -->
+            <section class="party-card active" data-index="0">
+                <div class="huge-bg-text">PARTY</div>
+                <div class="card-content">
+                    <img src="discoball.png" alt="Disco" class="icon-asset interactive-obj" style="width: clamp(60px, 20vw, 90px); height: auto; margin-bottom: 20px;" onclick="this.style.animation='spinObj 1s linear'">
+                    
+                    <h1 class="serif gold-text" style="font-size: clamp(3rem, 15vw, 5rem); line-height: 1; margin-bottom: 10px;">
+                        BIRTHDAY<br>NIGHT
+                    </h1>
+                    <img src="sparkles.png" alt="Sparkles" class="icon-asset" style="width: clamp(30px, 10vw, 40px); margin-top: -20px; margin-bottom: 20px;">
+                    
+                    <p style="color: var(--text-dim); font-size: clamp(0.75rem, 3vw, 0.85rem); letter-spacing: 4px; text-transform: uppercase;">Premium Experience</p>
+                </div>
+            </section>
+
+            <!-- SECTION 2: HERO & WELCOME -->
+            <section class="party-card next" data-index="1">
+                <div class="huge-bg-text" style="top: 30%; font-size: 25vw;">HELLO</div>
+                <div class="card-content">
+                    <div class="hero-photo-container">
+                        <img src="foto-orang.png" alt="Host" class="hero-photo-layer" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+                        <h2 class="serif gold-text hero-typography-overlap">CELE<br>BRATE</h2>
+                    </div>
+                    
+                    <p style="font-size: clamp(1rem, 5vw, 1.2rem); line-height: 1.6; font-weight: 300; margin-top: 20px;">
+                        It’s my birthday, and I’d love to celebrate it with you.
+                    </p>
+                    <p style="font-size: clamp(0.85rem, 4vw, 1rem); line-height: 1.5; color: var(--text-dim); margin-top: 15px;">
+                        Yuk, dress up dan nikmatin malamnya bareng-bareng! 
+                        <img src="heart-black.png" alt="" class="icon-asset" style="height: 1em; margin-left: 5px;">
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: DATETIME -->
+            <section class="party-card next-far" data-index="2">
+                <div class="huge-bg-text" style="font-size: 20vw; top: 15%;">WHEN</div>
+                <div class="card-content">
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px;">DATE</p>
+                    <div class="serif" style="font-size: clamp(4rem, 20vw, 6rem); background: linear-gradient(180deg, #fff, #555); -webkit-background-clip: text; color: transparent; line-height: 1;">
+                        12
+                    </div>
+                    <div class="serif gold-text" style="font-size: clamp(1.5rem, 8vw, 2.5rem); margin-bottom: 40px;">
+                        September 2026
+                    </div>
+                    
+                    <div style="width: 50%; height: 1px; background: rgba(212,175,55,0.3); margin: 0 auto 30px auto;"></div>
+                    
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px;">TIME</p>
+                    <div style="font-size: clamp(1.2rem, 6vw, 1.8rem); font-weight: 300;">17.00 – 20.00 WIB</div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: DRESS CODE -->
+            <section class="party-card" data-index="3">
+                <div class="huge-bg-text" style="top: 10%; font-size: 20vw;">LOOK</div>
+                <div class="card-content">
+                    <h2 class="serif gold-text" style="font-size: clamp(2rem, 10vw, 3rem); margin-bottom: 15px;">DRESS CODE</h2>
+                    <p style="font-size: clamp(0.85rem, 4vw, 1rem); color: var(--text-dim); margin-bottom: 30px;">Bring your best club look</p>
+                    
+                    <div style="display: flex; gap: 15px; justify-content: center; width: 100%;">
+                        <div style="background: rgba(0,0,0,0.5); padding: 25px 15px; border-radius: 20px; flex: 1; border: 1px solid rgba(255,255,255,0.05);">
+                            <img src="heart-black.png" alt="Black" class="icon-asset interactive-obj" style="width: clamp(40px, 10vw, 50px); margin-bottom: 10px;">
+                            <div style="font-weight: 600; font-size: clamp(0.85rem, 4vw, 1rem);">Atasan<br>Hitam</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.5); padding: 25px 15px; border-radius: 20px; flex: 1; border: 1px solid rgba(255,255,255,0.05);">
+                            <img src="heart-brown.png" alt="Brown" class="icon-asset interactive-obj" style="width: clamp(40px, 10vw, 50px); margin-bottom: 10px;">
+                            <div style="font-weight: 600; font-size: clamp(0.85rem, 4vw, 1rem);">Bawahan<br>Cokelat</div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <div class="page" id="page-1">
-            <div class="absolute inset-0 overflow-hidden bg-black pointer-events-none">
-                <img src="foto-orang.png" alt="Birthday Person" 
-                     class="w-full h-full object-cover object-center animate-bg opacity-90"
-                     onerror="this.src='https://placehold.co/480x800/111/D4AF37?text=Foto+Orang'">
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent h-full w-full pointer-events-none"></div>
-            
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
-                <div class="relative w-full min-h-[101%] px-6 pt-[55vh] pb-[35vh] flex flex-col">
-                    <div>
-                        <h2 class="font-heading text-4xl text-white mb-2 animate-content delay-1 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
-                            BIRTHDAY NIGHT
-                            <img src="emoji-discoball.png" class="icon-emoji" alt="Disco">
-                            <img src="emoji-sparkle.png" class="icon-emoji" alt="Sparkle">
-                        </h2>
-                        <div class="w-12 h-1.5 bg-gold mb-6 animate-content delay-2 rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]"></div>
-                        <p class="text-gray-100 text-sm leading-relaxed animate-content delay-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] font-medium">
-                            It’s my birthday, and I’d love to celebrate it with you.<br><br>
-                            Yuk, dress up dan nikmatin malamnya bareng-bareng! 
-                            <img src="emoji-blackheart.png" class="icon-emoji" alt="Heart">
-                        </p>
-                    </div>
+            <!-- SECTION 5: GIFT & LOCATION -->
+            <section class="party-card" data-index="4">
+                <div class="huge-bg-text" style="top: 5%; font-size: 25vw;">INFO</div>
+                <div class="card-content">
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 15px;">GIFT</p>
+                    <p style="font-size: clamp(0.9rem, 4vw, 1rem); line-height: 1.6; font-weight: 300; margin-bottom: 15px;">
+                        Untuk kado, nggak perlu repot bawa hadiah yaa.
+                    </p>
+                    <p style="font-size: clamp(0.8rem, 3.5vw, 0.9rem); color: var(--text-dim); line-height: 1.5; margin-bottom: 30px;">
+                        Buat yang mau kasih tanda kasih, bisa melalui amplop atau QR yang sudah disediakan di lokasi.
+                    </p>
+                    
+                    <div style="width: 50%; height: 1px; background: rgba(212,175,55,0.3); margin: 0 auto 30px auto;"></div>
+
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px;">LOCATION</p>
+                    <div class="serif" style="font-size: clamp(1.2rem, 6vw, 1.8rem); margin-bottom: 5px;">Pondok Rangi Resto</div>
+                    <p style="font-size: clamp(0.85rem, 4vw, 1rem); color: var(--text-dim); margin-bottom: 25px;">Rawasari</p>
+                    
+                    <a href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x2e69f5abae149179:0x25e0fd0baabdde63?entry=s&sa=X&ved=2ahUKEwiU-s_m276WAxUVk-EIHcbyJW8Q4kB6BAgcEAA&hl=en" 
+                       target="_blank" rel="noopener noreferrer" 
+                       class="btn-luxe interactive-obj" id="btn-map">
+                        VIEW ON MAPS &rarr;
+                    </a>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <div class="page" id="page-2">
-            <div class="absolute inset-0 bg-black pointer-events-none"></div>
-            <div class="absolute inset-0 bg-cover bg-center opacity-20 pointer-events-none" style="background-image: url('background.png'); filter: blur(3px);"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-[#111] to-[#000] opacity-80 pointer-events-none"></div>
-            
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
-                <div class="relative w-full min-h-[101%] px-6 pt-[15vh] pb-[35vh] flex flex-col">
-                    <div>
-                        <h2 class="font-heading text-3xl text-gold mb-8 text-center animate-content glow-gold">When & Where</h2>
-                        
-                        <div class="glass-card p-6 mb-6 animate-content delay-1">
-                            <div class="flex items-center justify-between">
-                                <div class="text-center w-1/2 border-r border-gray-600/50 pr-2">
-                                    <h3 class="text-gold text-[10px] tracking-widest uppercase mb-2">Date</h3>
-                                    <p class="font-heading text-3xl text-white leading-none drop-shadow-md">12</p>
-                                    <p class="text-xs tracking-wider text-gray-300 mt-1">SEPT 2026</p>
-                                </div>
-                                <div class="text-center w-1/2 pl-2">
-                                    <h3 class="text-gold text-[10px] tracking-widest uppercase mb-2">Time</h3>
-                                    <p class="font-heading text-2xl text-white leading-none drop-shadow-md">17.00</p>
-                                    <p class="text-xs text-gray-400 mt-1">- 20.00 WIB</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glass-card p-6 text-center animate-content delay-2">
-                            <h3 class="text-gold text-[10px] tracking-widest uppercase mb-3">Location</h3>
-                            <p class="font-heading font-bold text-xl text-white mb-1">Pondok Rangi</p>
-                            <p class="text-sm text-gray-300 mb-1">Resto & Coffee</p>
-                            <p class="text-xs text-gray-500 mb-6">Rawasari</p>
-                            
-                            <a href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x2e69f5abae149179:0x25e0fd0baabdde63?entry=s&sa=X&ved=2ahUKEwiU-s_m276WAxUVk-EIHcbyJW8Q4kB6BAgcEAA&hl=en" target="_blank" class="relative z-50 inline-block bg-white text-black font-semibold text-xs px-6 py-2.5 rounded-full uppercase tracking-wider transition transform hover:scale-105 hover:bg-gold shadow-lg">
-                                Open Maps ➔
-                            </a>
-                        </div>
-                    </div>
+            <!-- SECTION 6: THE REVEAL TRIGGER -->
+            <section class="party-card" data-index="5">
+                <div class="huge-bg-text" style="top: 20%; left: -10%; font-size: 30vw;">RSVP</div>
+                <div class="card-content">
+                    <img src="toast-glass.png" alt="Cheers" class="icon-asset interactive-obj" style="width: clamp(80px, 25vw, 120px); margin-bottom: 20px;">
+                    
+                    <p style="font-size: clamp(1rem, 5vw, 1.2rem); line-height: 1.6; font-weight: 300; margin-bottom: 20px; font-style: italic;">
+                        "Yang penting datang, karena kehadiran kalian yang bikin malam ini makin seru."
+                    </p>
+                    <h2 class="serif gold-text" style="font-size: clamp(2rem, 12vw, 3.5rem); margin-bottom: 40px;">
+                        See you there!
+                    </h2>
+                    
+                    <!-- THE MAGIC BUTTON -->
+                    <button class="btn-luxe interactive-obj" id="btn-grand-reveal" style="padding: 20px; font-size: clamp(1rem, 5vw, 1.2rem);">
+                        LET'S PARTY <img src="sparkles.png" alt="" class="icon-asset" style="height: 1em; margin-left: 5px;">
+                    </button>
                 </div>
-            </div>
+            </section>
+
         </div>
+    </main>
 
-        <div class="page" id="page-3">
-            <div class="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('background.png'); filter: blur(10px);"></div>
-            <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a]/90 to-[#000]/90 pointer-events-none"></div>
-            
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
-                <div class="relative w-full min-h-[101%] px-6 text-center pt-[15vh] pb-[35vh] flex flex-col">
-                    <div>
-                        <div class="mb-10 animate-content">
-                            <h2 class="font-heading text-2xl text-white mb-6 uppercase tracking-widest glow-gold">Dress Code</h2>
-                            <div class="flex justify-center gap-4">
-                                <div class="glass-card p-4 w-36 flex flex-col items-center">
-                                    <img src="emoji-blackheart.png" class="icon-emoji-lg mb-3" alt="Black Heart">
-                                    <p class="text-sm font-bold text-white tracking-wide">Atasan</p>
-                                    <p class="text-xs text-gray-400 mt-1">Hitam</p>
-                                </div>
-                                <div class="glass-card p-4 w-36 flex flex-col items-center">
-                                    <img src="emoji-brownheart.png" class="icon-emoji-lg mb-3" alt="Brown Heart">
-                                    <p class="text-sm font-bold text-white tracking-wide">Bawahan</p>
-                                    <p class="text-xs text-[#d28b57] mt-1">Cokelat</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glass-card p-6 border-t-2 border-t-gold animate-content delay-1 bg-black/60 shadow-[0_-5px_20px_rgba(212,175,55,0.1)]">
-                            <h3 class="font-heading text-lg text-gold mb-3">Tanda Kasih</h3>
-                            <p class="text-xs text-gray-300 leading-relaxed font-medium">
-                                Untuk kado, nggak perlu repot bawa hadiah yaa.<br><br>
-                                Buat yang mau kasih tanda kasih, bisa melalui amplop yang akan disediakan di lokasi.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div id="ui-layer">
+        <div class="progress-track" id="progress-dots"></div>
+        <div id="nav-controls">
+            <button class="nav-btn" id="btn-prev" disabled>&larr;</button>
         </div>
+    </div>
 
-        <div class="page" id="page-4">
-            <div class="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('background.png');"></div>
-            <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, rgba(0,0,0,0.9) 70%);"></div>
-            
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
-                <div class="relative w-full min-h-[101%] px-8 text-center pt-[20vh] pb-[35vh] flex flex-col items-center">
-                    <div class="flex flex-col items-center w-full">
-                        <img src="emoji-glasses.png" class="icon-emoji-lg mb-6 animate-content" alt="Cheers" style="width: 4em; height: 4em; filter: drop-shadow(0 0 15px rgba(212,175,55,0.8));">
-                        
-                        <p class="text-sm text-gray-200 italic mb-8 leading-relaxed animate-content delay-1 font-medium drop-shadow-md">
-                            "Yang penting datang, karena kehadiran kalian yang bikin malam ini makin seru."
-                        </p>
-                        
-                        <h1 class="font-heading text-5xl text-white mb-4 animate-content delay-2 drop-shadow-2xl">
-                            See you <br><span class="text-gold italic glow-gold">there!</span>
-                        </h1>
-                        
-                        <img src="emoji-sparkle.png" class="icon-emoji animate-content delay-3" alt="Sparkle">
-
-                        <button id="btn-restart" class="relative z-50 mt-16 border-b border-gray-500 text-gray-300 text-[10px] uppercase tracking-widest pb-1 hover:text-gold hover:border-gold transition">
-                            Baca Ulang Undangan
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <!-- The Host -->
+    <div id="mascot-layer" class="pos-default">
+        <div id="mascot-bubble"></div>
+        <img src="maskot.png" alt="Host" id="mascot-img" onerror="this.style.display='none'">
     </div>
 
     <script>
-        // Loading yang 100% Tidak Akan Nyangkut (berjalan instan)
-        document.addEventListener("DOMContentLoaded", () => {
-            const loadingScreen = document.getElementById('loading-screen');
-            setTimeout(() => {
-                loadingScreen.style.opacity = '0';
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Core DOM Elements
+            const body = document.body;
+            const loader = document.getElementById('loader');
+            const openingCurtain = document.getElementById('opening-curtain');
+            const openTitle = document.getElementById('open-title');
+            const btnOpenEnvelope = document.getElementById('btn-open-envelope');
+            
+            const cards = document.querySelectorAll('.party-card');
+            const totalCards = cards.length;
+            
+            const btnPrev = document.getElementById('btn-prev');
+            const progressTrack = document.getElementById('progress-dots');
+            
+            const flash = document.getElementById('grand-flash');
+            const btnGrandReveal = document.getElementById('btn-grand-reveal');
+            
+            let currentIndex = 0;
+            let isScrollMode = false;
+            let actPhase = 0; // 0: loading, 1: curtain, 2: cards, 3: free scroll
+
+            // --- 1. ASSET PRELOADING ---
+            const requiredAssets = [
+                'background.png', 'foto-orang.png', 'maskot.png', 
+                'discoball.png', 'sparkles.png', 'heart-black.png', 
+                'heart-brown.png', 'toast-glass.png'
+            ];
+            
+            let loadedCount = 0;
+
+            function initOpening() {
+                loader.classList.add('hidden');
+                actPhase = 1;
                 setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 500); 
-            }, 300); // 0.3 detik langsung kebuka
-        });
+                    openTitle.style.opacity = '1';
+                    openTitle.style.transform = 'translateY(0)';
+                    btnOpenEnvelope.style.opacity = '1';
+                }, 300);
+            }
 
-        let currentPage = 0;
-        const totalPages = 5;
-        const pages = document.querySelectorAll('.page');
-        const storyUI = document.getElementById('story-ui');
-        const btnOpen = document.getElementById('btn-open');
-        const btnRestart = document.getElementById('btn-restart');
-        
-        const guideContainer = document.getElementById('guide-container');
-        const guideText = document.getElementById('guide-text');
-        
-        const guideMessages = [
-            "",
-            "Yuk, dress up dan rayakan bareng! Tap ujung kanan untuk lanjut ya.",
-            "Ini lokasinya. Boleh langsung diklik tombol MAPS-nya loh!",
-            "Jangan lupa pakai dress code yang ini ya!",
-            "Gak sabar ketemu kalian semua!"
-        ];
-
-        function updatePage(newIndex) {
-            if (newIndex < 0 || newIndex >= totalPages) return;
-            
-            pages.forEach((page, index) => {
-                page.classList.remove('active', 'prev');
-                if (index < newIndex) {
-                    page.classList.add('prev'); 
-                }
-            });
-            
-            currentPage = newIndex;
-            pages[currentPage].classList.add('active');
-
-            const animContents = pages[currentPage].querySelectorAll('.animate-content');
-            animContents.forEach(el => {
-                el.style.animation = 'none';
-                setTimeout(() => el.style.animation = '', 10);
-            });
-            
-            const bubble = document.querySelector('.speech-bubble');
-            bubble.style.animation = 'none';
-            setTimeout(() => bubble.style.animation = '', 10);
-
-            if (currentPage > 0) {
-                guideContainer.style.display = 'flex';
-                setTimeout(() => {
-                    guideContainer.style.transform = 'translateY(0)';
-                }, 50);
-                guideText.innerText = guideMessages[currentPage];
+            if(requiredAssets.length > 0) {
+                requiredAssets.forEach(src => {
+                    const img = new Image();
+                    img.onload = () => { loadedCount++; if(loadedCount === requiredAssets.length) initOpening(); };
+                    img.onerror = () => { loadedCount++; if(loadedCount === requiredAssets.length) initOpening(); };
+                    img.src = src;
+                });
+                setTimeout(() => { if (actPhase === 0) initOpening(); }, 3000);
             } else {
-                guideContainer.style.transform = 'translateY(150%)';
+                initOpening();
+            }
+
+            const mascot = {
+                layer: document.getElementById('mascot-layer'),
+                bubble: document.getElementById('mascot-bubble'),
+                img: document.getElementById('mascot-img'),
+                timer: null,
+                
+                say(text, duration = 4000) {
+                    clearTimeout(this.timer);
+                    this.bubble.classList.remove('visible');
+                    
+                    setTimeout(() => {
+                        this.bubble.textContent = text;
+                        this.bubble.classList.add('visible');
+                        
+                        // Micro bounce
+                        this.img.style.transform = 'scale(1.05) translateY(-5px)';
+                        setTimeout(() => this.img.style.transform = '', 200);
+
+                        if(duration > 0) {
+                            this.timer = setTimeout(() => {
+                                this.bubble.classList.remove('visible');
+                            }, duration);
+                        }
+                    }, 300);
+                },
+
+                move(positionClass) {
+                    this.layer.className = ''; 
+                    if (positionClass) this.layer.classList.add(positionClass);
+                },
+                
+                poke() {
+                    const jokes = ["Aw! Jangan dicubit 😭", "Fokus ke undangannya dong 👀", "Let's party! 🪩"];
+                    this.say(jokes[Math.floor(Math.random() * jokes.length)], 3000);
+                }
+            };
+
+            mascot.img.addEventListener('click', () => mascot.poke());
+
+            openingCurtain.addEventListener('click', () => {
+                if (actPhase !== 1) return;
+                
+                openingCurtain.classList.add('opened');
+                actPhase = 2;
+                buildProgressDots();
+                updateCards(0);
+                
+                setTimeout(() => mascot.say("Eh, akhirnya datang juga! 👀", 4000), 1000);
+            });
+
+            function buildProgressDots() {
+                progressTrack.innerHTML = '';
+                for(let i = 0; i < totalCards; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'progress-dot';
+                    progressTrack.appendChild(dot);
+                }
+            }
+
+            function updateCards(newIndex) {
+                if (isScrollMode || newIndex < 0 || newIndex >= totalCards) return;
+                currentIndex = newIndex;
+
+                cards.forEach((card, idx) => {
+                    card.classList.remove('active', 'prev', 'next', 'next-far');
+                    if (idx === currentIndex) card.classList.add('active');
+                    else if (idx < currentIndex) card.classList.add('prev');
+                    else if (idx === currentIndex + 1) card.classList.add('next');
+                    else card.classList.add('next-far');
+                });
+
+                Array.from(progressTrack.children).forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === currentIndex);
+                });
+
+                btnPrev.disabled = currentIndex === 0;
+
+                handleStoryBeats(currentIndex);
+            }
+
+            function handleStoryBeats(index) {
+                switch(index) {
+                    case 0: mascot.move(''); break;
+                    case 1: 
+                        mascot.move('pos-left'); 
+                        mascot.say("Masuk dulu, ada yang mau aku tunjukin.", 3000); 
+                        break;
+                    case 2: 
+                        mascot.move('');
+                        mascot.say("Catat tanggalnya ya. Jangan sampai lupa.", 3000);
+                        break;
+                    case 3: 
+                        mascot.move('pos-left');
+                        mascot.say("Nah, dress code ini penting. 🖤🤎", 3000);
+                        break;
+                    case 4: 
+                        mascot.move('');
+                        mascot.say("Lokasinya di sini. Tinggal tap mapnya.", 3000);
+                        break;
+                    case 5: 
+                        mascot.move('pos-center');
+                        mascot.say("Oke, semuanya udah siap. Let's party!", 0); 
+                        break;
+                }
+            }
+
+            btnPrev.addEventListener('click', () => updateCards(currentIndex - 1));
+
+            let startY = 0;
+            document.addEventListener('touchstart', e => {
+                if (actPhase !== 2) return;
+                startY = e.changedTouches[0].screenY;
+            }, {passive: true});
+
+            document.addEventListener('touchend', e => {
+                if (actPhase !== 2) return;
+                let endY = e.changedTouches[0].screenY;
+                let diffY = startY - endY;
+
+                // Vertical swipe for cards
+                if (Math.abs(diffY) > 50) {
+                    if (diffY > 0) updateCards(currentIndex + 1); // swipe up -> next
+                    else updateCards(currentIndex - 1); // swipe down -> prev
+                }
+            }, {passive: true});
+
+            function createConfetti() {
+                const colors = ['#D4AF37', '#FFFFFF', '#8C6D1F'];
+                const container = document.getElementById('particles');
+                for(let i=0; i<60; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.width = Math.random() * 8 + 4 + 'px';
+                    p.style.height = p.style.width;
+                    p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.left = '50%'; p.style.top = '50%';
+                    
+                    const tx = (Math.random() - 0.5) * window.innerWidth * 1.5;
+                    const ty = (Math.random() - 0.5) * window.innerHeight * 2;
+                    
+                    p.animate([
+                        { transform: 'translate(0,0) scale(0)', opacity: 1 },
+                        { transform: `translate(${tx}px, ${ty}px) scale(1) rotate(${Math.random()*360}deg)`, opacity: 0 }
+                    ], { duration: 1000 + Math.random() * 2000, easing: 'cubic-bezier(0.25, 1, 0.3, 1)' });
+                    
+                    container.appendChild(p);
+                    setTimeout(() => p.remove(), 3000);
+                }
+            }
+
+            btnGrandReveal.addEventListener('click', () => {
+                if (isScrollMode) {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    return;
+                }
+
+                // Flash & FX
+                flash.style.opacity = '1';
+                createConfetti();
+                mascot.say("YAY! Sekarang scroll bebas ke atas/bawah! 🪩✨", 4000);
+
                 setTimeout(() => {
-                    guideContainer.style.display = 'none';
+                    // Structure Shift
+                    isScrollMode = true;
+                    actPhase = 3;
+                    
+                    // Activate final mobile scroll mode
+                    body.classList.add('is-scroll-mode');
+                    
+                    // Clean up card inline transforms
+                    cards.forEach(c => c.style.transform = '');
+
+                    mascot.move(''); // Back to default right side
+                    btnGrandReveal.innerHTML = '&uarr; BACK TO TOP';
+                    
+                    // Jump to top so the continuous story starts fresh
+                    window.scrollTo(0, 0);
+                    flash.style.opacity = '0';
+                    
+                    setupScrollObserver();
+
                 }, 500); 
+            });
+
+            function setupScrollObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const idx = parseInt(entry.target.getAttribute('data-index'));
+                            if(idx === 1) mascot.say("Pelan-pelan bacanya...", 3000);
+                            if(idx === 3) mascot.say("Outfit-nya dipersiapkan! ✨", 3000);
+                            if(idx === 4) mascot.say("Jangan kesasar ya 😆", 3000);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                cards.forEach(card => observer.observe(card));
             }
 
-            for (let i = 0; i < totalPages; i++) {
-                const bar = document.getElementById(`bar-${i}`);
-                if (i <= currentPage && currentPage > 0) {
-                    bar.style.width = '100%';
-                } else {
-                    bar.style.width = '0%';
-                }
-            }
-        }
+            document.getElementById('btn-map').addEventListener('click', () => {
+                mascot.say("Gas cek lokasinya dulu 👀🚗", 3000);
+            });
 
-        btnOpen.addEventListener('click', (e) => {
-            e.stopPropagation();
-            storyUI.style.display = 'flex';
-            updatePage(1); 
         });
-
-        btnRestart.addEventListener('click', (e) => {
-            e.stopPropagation();
-            storyUI.style.display = 'none';
-            updatePage(0);
-        });
-
-        // --- SISTEM DETEKSI SENTUH DAN KLIK MOUSE CERDAS ---
-        let startY = 0; let startX = 0; let isDragging = false;
-        let lastTouchTime = 0; // Mencegah klik ganda saat di HP
-        const appContainer = document.getElementById('app');
-
-        // Deteksi awal sentuhan layar (HP)
-        appContainer.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-            startX = e.touches[0].clientX;
-            isDragging = false;
-        }, {passive: true});
-
-        // Deteksi jari bergeser / Scroll (HP)
-        appContainer.addEventListener('touchmove', (e) => {
-            const moveY = Math.abs(e.touches[0].clientY - startY);
-            const moveX = Math.abs(e.touches[0].clientX - startX);
-            // Jika jari bergerak, batalkan niat 'klik pindah halaman'
-            if (moveY > 10 || moveX > 10) {
-                isDragging = true; 
-            }
-        }, {passive: true});
-
-        // Fungsi utama untuk mengatur klik & tap supaya akurat (Kiri 25%, Kanan 25% dari kotak App)
-        function handleNavigation(clientX, target) {
-            // Abaikan jika yang diklik adalah tombol / link
-            if (target.closest('button') || target.closest('a')) return;
-            if (currentPage === 0) return; // Halaman sampul pakai tombol "Tap to Open"
-
-            // Hitung posisi klik RELATIF terhadap ukuran kotak aplikasinya
-            const rect = appContainer.getBoundingClientRect();
-            const relativeX = clientX - rect.left;
-            const containerWidth = rect.width;
-            
-            // Klik 25% bagian kiri
-            if (relativeX < containerWidth * 0.25) {
-                if (currentPage === 1) {
-                    storyUI.style.display = 'none';
-                    updatePage(0);
-                } else if (currentPage > 1) {
-                    updatePage(currentPage - 1);
-                }
-            } 
-            // Klik 25% bagian kanan
-            else if (relativeX > containerWidth * 0.75) {
-                if (currentPage < totalPages - 1) {
-                    updatePage(currentPage + 1);
-                }
-            }
-        }
-
-        // Eksekusi untuk Pengguna HP (Touch)
-        appContainer.addEventListener('touchend', (e) => {
-            if (isDragging) return; // Jangan ganti halaman kalau lagi scroll teks
-            lastTouchTime = Date.now();
-            handleNavigation(e.changedTouches[0].clientX, e.target);
-        });
-
-        // Eksekusi untuk Pengguna PC (Mouse Biasa)
-        appContainer.addEventListener('click', (e) => {
-            // Cegah error 'klik ganda otomatis' dari browser HP yang baca touch sebagai klik juga
-            if (Date.now() - lastTouchTime < 500) return; 
-            handleNavigation(e.clientX, e.target);
-        });
-
     </script>
 </body>
 </html>
