@@ -129,6 +129,15 @@
             border-color: transparent transparent transparent white;
         }
 
+        /* Sembunyikan scrollbar visual agar desain bersih */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
     </style>
 </head>
 <body class="antialiased">
@@ -150,7 +159,7 @@
         </div>
 
         <!-- MASKOT PEMANDU (Tanpa Border, Tanpa Kotak) -->
-        <div id="guide-container" class="absolute bottom-4 right-4 z-50 flex items-end gap-2 pointer-events-none" style="display: none; transform: translateY(150%); transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
+        <div id="guide-container" class="absolute bottom-12 right-4 z-50 flex items-end gap-2 pointer-events-none" style="display: none; transform: translateY(150%); transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
             <div class="speech-bubble bg-white text-black text-[11px] p-2.5 rounded-xl rounded-br-none shadow-2xl max-w-[130px] font-semibold mb-2">
                 <span id="guide-text">Selamat datang!</span>
             </div>
@@ -166,9 +175,9 @@
             <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black pointer-events-none"></div>
             
             <!-- Area yang dijamin bisa discroll -->
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden">
-                <div class="relative w-full px-6 min-h-[100vh] flex flex-col pb-10">
-                    <div class="my-auto py-20 text-center flex flex-col items-center animate-content">
+            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+                <div class="relative w-full min-h-[101%] px-6 pt-[25vh] pb-[35vh] flex flex-col items-center">
+                    <div class="text-center flex flex-col items-center animate-content">
                         <h3 class="text-xs tracking-[0.4em] text-gray-400 mb-4">YOU ARE INVITED</h3>
                         <h1 class="font-heading text-5xl text-white mb-6 leading-tight drop-shadow-2xl">
                             BIRTHDAY<br>
@@ -194,10 +203,9 @@
             </div>
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent h-full w-full pointer-events-none"></div>
             
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden">
-                <div class="relative w-full px-6 min-h-[100vh] flex flex-col pb-36">
-                    <!-- mt-auto memastikan konten turun ke bawah tapi aman disingkap/scroll ke atas -->
-                    <div class="mt-auto pt-64">
+            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+                <div class="relative w-full min-h-[101%] px-6 pt-[55vh] pb-[35vh] flex flex-col">
+                    <div>
                         <h2 class="font-heading text-4xl text-white mb-2 animate-content delay-1 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
                             BIRTHDAY NIGHT
                             <img src="emoji-discoball.png" class="icon-emoji" alt="Disco">
@@ -219,9 +227,9 @@
             <div class="absolute inset-0 bg-cover bg-center opacity-20 pointer-events-none" style="background-image: url('background.png'); filter: blur(3px);"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#111] to-[#000] opacity-80 pointer-events-none"></div>
             
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden">
-                <div class="relative w-full px-6 min-h-[100vh] flex flex-col pb-36">
-                    <div class="my-auto pt-20">
+            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+                <div class="relative w-full min-h-[101%] px-6 pt-[15vh] pb-[35vh] flex flex-col">
+                    <div>
                         <h2 class="font-heading text-3xl text-gold mb-8 text-center animate-content glow-gold">When & Where</h2>
                         
                         <div class="glass-card p-6 mb-6 animate-content delay-1">
@@ -258,9 +266,9 @@
             <div class="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('background.png'); filter: blur(10px);"></div>
             <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a]/90 to-[#000]/90 pointer-events-none"></div>
             
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden">
-                <div class="relative w-full px-6 text-center min-h-[100vh] flex flex-col pb-36">
-                    <div class="my-auto pt-20">
+            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+                <div class="relative w-full min-h-[101%] px-6 text-center pt-[15vh] pb-[35vh] flex flex-col">
+                    <div>
                         <div class="mb-10 animate-content">
                             <h2 class="font-heading text-2xl text-white mb-6 uppercase tracking-widest glow-gold">Dress Code</h2>
                             <div class="flex justify-center gap-4">
@@ -293,9 +301,9 @@
             <div class="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('background.png');"></div>
             <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, rgba(0,0,0,0.9) 70%);"></div>
             
-            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden">
-                <div class="relative w-full px-8 text-center min-h-[100vh] flex flex-col pb-36 items-center">
-                    <div class="my-auto pt-20 flex flex-col items-center w-full">
+            <div class="absolute inset-0 overflow-y-auto overflow-x-hidden no-scrollbar">
+                <div class="relative w-full min-h-[101%] px-8 text-center pt-[20vh] pb-[35vh] flex flex-col items-center">
+                    <div class="flex flex-col items-center w-full">
                         <img src="emoji-glasses.png" class="icon-emoji-lg mb-6 animate-content" alt="Cheers" style="width: 4em; height: 4em; filter: drop-shadow(0 0 15px rgba(212,175,55,0.8));">
                         
                         <p class="text-sm text-gray-200 italic mb-8 leading-relaxed animate-content delay-1 font-medium drop-shadow-md">
