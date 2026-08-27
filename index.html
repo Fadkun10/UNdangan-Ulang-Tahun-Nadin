@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Birthday Night Invitation</title>
+    
+    <!-- Meta Tags untuk Pratinjau Link (WhatsApp, Telegram, IG, dll) -->
+    <meta property="og:title" content="Birthday Night Invitation 🪩✨">
+    <meta property="og:description" content="It's my birthday, and I'd love to celebrate it with you! Yuk, lihat undangannya.">
+    <meta property="og:image" content="poster.png">
+    <meta property="og:type" content="website">
+    
+    <!-- Menggunakan Tailwind CSS untuk styling utama -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Premium: Playfair Display (Heading) & Montserrat (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Setup Font & Body */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            touch-action: pan-y;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Container khusus HP (Frame Story) */
+        .mobile-container {
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            background: #050505;
+            height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            perspective: 1500px; /* Kedalaman 3D yang sangat kuat */
+        }
+
+        /* ANIMASI BARU YANG LEBIH HEBOH (3D Carousel Bounce) */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Diubah agar tidak memaksa ke tengah saat di-scroll */
+            align-items: center;
+            z-index: 10;
+            background-color: #050505;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            overflow-y: auto; /* Mengizinkan scroll vertikal */
+            overflow-x: hidden;
+            
+            /* Animasi masuk dari Kanan (Membesar, Melompat, Berputar) */
+            transform: rotateY(90deg) scale(0.4) translateZ(500px);
+            /* Transisi Cubic-Bezier untuk efek memantul (Spring/Bounce) */
+            transition: transform 0.9s cubic-bezier(0.68, -0.6, 0.32, 1.6), opacity 0.8s, visibility 0.8s;
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 20;
+            /* Tampil di tengah layar */
+            transform: rotateY(0deg) scale(1) translateZ(0);
+        }
+        .page.prev {
+            /* Terlempar ke Kiri */
+            transform: rotateY(-90deg) scale(0.4) translateZ(500px);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 10;
+        }
+
+        /* UI Navigasi Story (Bar Progress di atas) */
+        .story-progress-container {
+            position: absolute;
+            top: 15px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 50;
+        }
+        .story-bar {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .story-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #D4AF37; /* Warna Emas */
+            transition: width 0.3s ease;
+        }
+        .story-bar.completed .story-bar-fill {
+            width: 100%;
+        }
+
+        /* Glassmorphism Effect untuk Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Efek Emas Glow */
+        .text-gold { color: #D4AF37; }
+        .glow-gold { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 0 20px rgba(212, 175, 55, 0.3); }
+        
+        /* Animasi Kustom Konten */
+        @keyframes kenBurns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        .animate-bg {
+            animation: kenBurns 15s alternate infinite ease-in-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .page.active .animate-content {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards;
+        }
+        .delay-1 { animation-delay: 0.2s; opacity: 0; }
+        .delay-2 { animation-delay: 0.4s; opacity: 0; }
+        .delay-3 { animation-delay: 0.6s; opacity: 0; }
+
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.3; transform: translateX(0); }
+            50% { opacity: 0.8; transform: translateX(10px); }
+        }
+        .tap-hint { animation: pulseHint 2s infinite; }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #050505;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: #D4AF37;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Ukuran standar icon emoji PNG */
+        .icon-emoji { width: 1.2em; height: 1.2em; display: inline-block; vertical-align: middle; margin: 0 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .icon-emoji-lg { width: 2em; height: 2em; }
+
+        /* KARAKTER PEMANDU WEB */
+        .guide-avatar {
+            animation: floatAvatar 3s ease-in-out infinite;
+        }
+        @keyframes floatAvatar {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .speech-bubble {
+            position: relative;
+            transform-origin: bottom right;
+            animation: popBubble 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popBubble {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -10px;
+            border-width: 10px 0 0 10px;
+            border-style: solid;
+            border-color: transparent transparent transparent white;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Container Utama (Frame HP) -->
+    <div id="app" class="mobile-container">
+        
+        <!-- Layar loading memuat gambar di belakang layar -->
+        <div id="loading-screen">
+            <div class="loader mb-6"></div>
+            <h2 class="font-heading text-gold text-lg tracking-[0.2em] uppercase glow-gold">Preparing Night</h2>
+        </div>
+
+        <!-- Progress Bar ala Instagram Story -->
+        <div id="story-ui" class="story-progress-container" style="display: none;">
+            <div class="story-bar"><div class="story-bar-fill" id="bar-0"></div></div>
+            <div class="story-bar"><div class="story-bar-fill" id="bar-1"></div></div>
+            <div class="story-bar"><div class="story-bar-fill" id="bar-2"></div></div>
+            <div class="story-bar"><div class="story-bar-fill" id="bar-3"></div></div>
+            <div class="story-bar"><div class="story-bar-fill" id="bar-4"></div></div>
+        </div>
+
+        <!-- KARAKTER PEMANDU (Muncul setelah halaman 1) -->
+        <div id="guide-container" class="absolute bottom-6 right-6 z-50 flex items-end gap-3 pointer-events-none" style="display: none; transform: translateY(150%); transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
+            <!-- Balon Teks -->
+            <div class="speech-bubble bg-white text-black text-[11px] p-2.5 rounded-xl rounded-br-none shadow-2xl max-w-[140px] font-semibold">
+                <span id="guide-text">Selamat datang!</span>
+            </div>
+            <!-- Maskot Pemandu (Tanpa Border & Background) -->
+            <div class="guide-avatar w-[85px] h-[85px]">
+                <img src="maskot.png" alt="Guide" class="w-full h-full object-contain filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)]">
+            </div>
+        </div>
+
+        <!-- HALAMAN 1: COVER AWAL -->
+        <div class="page active" id="page-0">
+            <!-- Background kustom dari user -->
+            <div class="fixed inset-0 bg-cover bg-center opacity-40" style="background-image: url('background.png'); pointer-events-none;"></div>
+            <div class="fixed inset-0 bg-gradient-to-b from-black via-transparent to-black pointer-events-none"></div>
+            
+            <div class="relative z-10 text-center px-6 animate-content min-h-[100vh] flex flex-col justify-center">
+                <h3 class="text-xs tracking-[0.4em] text-gray-400 mb-4">YOU ARE INVITED</h3>
+                <h1 class="font-heading text-5xl text-white mb-6 leading-tight drop-shadow-2xl">
+                    BIRTHDAY<br>
+                    <span class="text-gold glow-gold text-6xl">NIGHT</span>
+                </h1>
+                
+                <div class="mt-16 flex flex-col items-center">
+                    <button id="btn-open" class="relative z-50 border border-gold text-gold font-bold py-3 px-8 rounded-full uppercase tracking-widest text-xs transition transform active:scale-95 bg-black bg-opacity-70 hover:bg-gold hover:text-black shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                        Tap To Open
+                    </button>
+                    <!-- Petunjuk tap -->
+                    <p class="text-[10px] text-gray-400 mt-6 tracking-widest tap-hint pointer-events-none">TAP KANAN UNTUK NEXT ➔</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HALAMAN 2: FOTO UTAMA & PESAN -->
+        <div class="page" id="page-1">
+            <!-- Foto kamu (dibuat fullscreen background dengan efek Ken Burns) -->
+            <div class="fixed inset-0 overflow-hidden bg-black pointer-events-none">
+                <img src="foto-orang.png" alt="Birthday Person" 
+                     class="w-full h-full object-cover object-center animate-bg opacity-90"
+                     onerror="this.src='https://placehold.co/480x800/111/D4AF37?text=Foto+Orang'">
+            </div>
+            
+            <!-- Gradien gelap di bawah agar tulisan terbaca -->
+            <div class="fixed inset-0 bg-gradient-to-t from-black via-black/60 to-transparent h-full w-full pointer-events-none"></div>
+            
+            <!-- Konten Pesan -->
+            <div class="relative z-10 w-full px-6 min-h-[100vh] flex flex-col justify-end pb-36 pt-20">
+                <h2 class="font-heading text-4xl text-white mb-2 animate-content delay-1 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
+                    BIRTHDAY NIGHT
+                    <img src="emoji-discoball.png" class="icon-emoji" alt="Disco">
+                    <img src="emoji-sparkle.png" class="icon-emoji" alt="Sparkle">
+                </h2>
+                <div class="w-12 h-1.5 bg-gold mb-6 animate-content delay-2 rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]"></div>
+                <p class="text-gray-100 text-sm leading-relaxed animate-content delay-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] font-medium">
+                    It’s my birthday, and I’d love to celebrate it with you.<br><br>
+                    Yuk, dress up dan nikmatin malamnya bareng-bareng! 
+                    <img src="emoji-blackheart.png" class="icon-emoji" alt="Heart">
+                </p>
+            </div>
+        </div>
+
+        <!-- HALAMAN 3: WAKTU & LOKASI -->
+        <div class="page" id="page-2">
+            <!-- Background kustom dari user -->
+            <div class="fixed inset-0 bg-black pointer-events-none"></div>
+            <div class="fixed inset-0 bg-cover bg-center opacity-20 pointer-events-none" style="background-image: url('background.png'); filter: blur(3px);"></div>
+            <div class="fixed inset-0 bg-gradient-to-b from-[#111] to-[#000] opacity-80 pointer-events-none"></div>
+            
+            <div class="relative z-10 w-full px-6 flex flex-col justify-center min-h-[100vh] pt-20 pb-40">
+                
+                <h2 class="font-heading text-3xl text-gold mb-8 text-center animate-content glow-gold">When & Where</h2>
+                
+                <!-- Tanggal & Waktu -->
+                <div class="glass-card p-6 mb-6 animate-content delay-1">
+                    <div class="flex items-center justify-between">
+                        <div class="text-center w-1/2 border-r border-gray-600/50 pr-2">
+                            <h3 class="text-gold text-[10px] tracking-widest uppercase mb-2">Date</h3>
+                            <p class="font-heading text-3xl text-white leading-none drop-shadow-md">12</p>
+                            <p class="text-xs tracking-wider text-gray-300 mt-1">SEPT 2026</p>
+                        </div>
+                        <div class="text-center w-1/2 pl-2">
+                            <h3 class="text-gold text-[10px] tracking-widest uppercase mb-2">Time</h3>
+                            <p class="font-heading text-2xl text-white leading-none drop-shadow-md">17.00</p>
+                            <p class="text-xs text-gray-400 mt-1">- 20.00 WIB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lokasi -->
+                <div class="glass-card p-6 text-center animate-content delay-2">
+                    <h3 class="text-gold text-[10px] tracking-widest uppercase mb-3">Location</h3>
+                    <p class="font-heading font-bold text-xl text-white mb-1">Pondok Rangi</p>
+                    <p class="text-sm text-gray-300 mb-1">Resto & Coffee</p>
+                    <p class="text-xs text-gray-500 mb-6">Rawasari</p>
+                    
+                    <!-- Link Google Maps -->
+                    <a href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x2e69f5abae149179:0x25e0fd0baabdde63?entry=s&sa=X&ved=2ahUKEwiU-s_m276WAxUVk-EIHcbyJW8Q4kB6BAgcEAA&hl=en" target="_blank" class="relative z-50 inline-block bg-white text-black font-semibold text-xs px-6 py-2.5 rounded-full uppercase tracking-wider transition transform hover:scale-105 hover:bg-gold shadow-lg">
+                        Open Maps ➔
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- HALAMAN 4: DRESS CODE & KADO -->
+        <div class="page" id="page-3">
+            <div class="fixed inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('background.png'); filter: blur(10px);"></div>
+            <div class="fixed inset-0 bg-gradient-to-br from-[#0a0a0a]/90 to-[#000]/90 pointer-events-none"></div>
+            
+            <div class="relative z-10 w-full px-6 text-center min-h-[100vh] flex flex-col justify-center pt-20 pb-40">
+                
+                <!-- Dress Code -->
+                <div class="mb-10 animate-content">
+                    <h2 class="font-heading text-2xl text-white mb-6 uppercase tracking-widest glow-gold">Dress Code</h2>
+                    
+                    <div class="flex justify-center gap-4">
+                        <div class="glass-card p-4 w-36 flex flex-col items-center">
+                            <img src="emoji-blackheart.png" class="icon-emoji-lg mb-3" alt="Black Heart">
+                            <p class="text-sm font-bold text-white tracking-wide">Atasan</p>
+                            <p class="text-xs text-gray-400 mt-1">Hitam</p>
+                        </div>
+                        <div class="glass-card p-4 w-36 flex flex-col items-center">
+                            <img src="emoji-brownheart.png" class="icon-emoji-lg mb-3" alt="Brown Heart">
+                            <p class="text-sm font-bold text-white tracking-wide">Bawahan</p>
+                            <p class="text-xs text-[#d28b57] mt-1">Cokelat</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tanda Kasih -->
+                <div class="glass-card p-6 border-t-2 border-t-gold animate-content delay-1 bg-black/60 shadow-[0_-5px_20px_rgba(212,175,55,0.1)]">
+                    <h3 class="font-heading text-lg text-gold mb-3">Tanda Kasih</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed font-medium">
+                        Untuk kado, nggak perlu repot bawa hadiah yaa.<br><br>
+                        Buat yang mau kasih tanda kasih, bisa melalui amplop yang akan disediakan di lokasi.
+                    </p>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- HALAMAN 5: PENUTUP -->
+        <div class="page" id="page-4">
+            <div class="fixed inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('background.png');"></div>
+            <!-- Spotlight effect radial -->
+            <div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, rgba(0,0,0,0.9) 70%);"></div>
+            
+            <div class="relative z-10 w-full px-8 text-center min-h-[100vh] flex flex-col justify-center items-center pt-20 pb-40">
+                
+                <img src="emoji-glasses.png" class="icon-emoji-lg mb-6 animate-content" alt="Cheers" style="width: 4em; height: 4em; filter: drop-shadow(0 0 15px rgba(212,175,55,0.8));">
+                
+                <p class="text-sm text-gray-200 italic mb-8 leading-relaxed animate-content delay-1 font-medium drop-shadow-md">
+                    "Yang penting datang, karena kehadiran kalian yang bikin malam ini makin seru."
+                </p>
+                
+                <h1 class="font-heading text-5xl text-white mb-4 animate-content delay-2 drop-shadow-2xl">
+                    See you <br><span class="text-gold italic glow-gold">there!</span>
+                </h1>
+                
+                <img src="emoji-sparkle.png" class="icon-emoji animate-content delay-3" alt="Sparkle">
+
+                <!-- Tombol Kembali ke Awal -->
+                <button id="btn-restart" class="relative z-50 mt-16 border-b border-gray-500 text-gray-300 text-[10px] uppercase tracking-widest pb-1 hover:text-gold hover:border-gold transition">
+                    Baca Ulang Undangan
+                </button>
+            </div>
+        </div>
+
+    </div> <!-- End Mobile Container -->
+
+    <script>
+        // Logika Preload & Hapus Loading Screen
+        window.onload = () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000); 
+            }, 800); 
+        };
+
+        // --- SISTEM STORY PAGE ---
+        let currentPage = 0;
+        const totalPages = 5;
+        const pages = document.querySelectorAll('.page');
+        const storyUI = document.getElementById('story-ui');
+        const btnOpen = document.getElementById('btn-open');
+        const btnRestart = document.getElementById('btn-restart');
+
+        // Logika Pemandu (Guide)
+        const guideContainer = document.getElementById('guide-container');
+        const guideText = document.getElementById('guide-text');
+        
+        // Pesan pemandu untuk setiap halaman (Kecuali Cover)
+        const guideMessages = [
+            "", // Hal 1 (Cover, Pemandu Disembunyikan)
+            "Yuk, dress up dan rayakan bareng! Tap kanan untuk lanjut ya.", // Hal 2 (Foto Utama)
+            "Ini lokasinya. Boleh langsung diklik tombol MAPS-nya loh!", // Hal 3 (Waktu & Tempat)
+            "Jangan lupa pakai dress code yang ini ya!", // Hal 4 (Dress Code)
+            "Gak sabar ketemu kalian semua!" // Hal 5 (Penutup)
+        ];
+
+        // Fungsi Update UI Halaman
+        function updatePage(newIndex) {
+            if (newIndex < 0 || newIndex >= totalPages) return;
+            
+            pages.forEach((page, index) => {
+                page.classList.remove('active', 'prev');
+                if (index < newIndex) {
+                    page.classList.add('prev'); 
+                }
+            });
+            
+            currentPage = newIndex;
+            pages[currentPage].classList.add('active');
+
+            // Reset animasi fade-in konten
+            const animContents = pages[currentPage].querySelectorAll('.animate-content');
+            animContents.forEach(el => {
+                el.style.animation = 'none';
+                setTimeout(() => el.style.animation = '', 10);
+            });
+            
+            // Animasi pop ulang pada balon teks
+            const bubble = document.querySelector('.speech-bubble');
+            bubble.style.animation = 'none';
+            setTimeout(() => bubble.style.animation = '', 10);
+
+            // Update Teks Pemandu & Kemunculan
+            if (currentPage > 0) {
+                guideContainer.style.display = 'flex';
+                // Memberikan delay kecil agar transisi terlihat mulus saat pop up
+                setTimeout(() => {
+                    guideContainer.style.transform = 'translateY(0)';
+                }, 50);
+                guideText.innerText = guideMessages[currentPage];
+            } else {
+                guideContainer.style.transform = 'translateY(150%)';
+                setTimeout(() => {
+                    guideContainer.style.display = 'none';
+                }, 500); // Tunggu sampai turun baru display none
+            }
+
+            // Update Progress Bar
+            updateProgressBar();
+        }
+
+        // Fungsi Update Progress Bar
+        function updateProgressBar() {
+            for (let i = 0; i < totalPages; i++) {
+                const bar = document.getElementById(`bar-${i}`);
+                if (i < currentPage) {
+                    bar.style.width = '100%';
+                } else if (i === currentPage) {
+                    bar.style.width = '100%';
+                } else {
+                    bar.style.width = '0%';
+                }
+            }
+        }
+
+        // --- INTERAKSI TOMBOL & NAVIGASI TAP PINTAR ---
+
+        btnOpen.addEventListener('click', (e) => {
+            e.stopPropagation();
+            storyUI.style.display = 'flex';
+            updatePage(1); 
+        });
+
+        // Event listener klik dipasang langsung pada layarnya agar tidak memblokir fungsi SCROLL
+        document.getElementById('app').addEventListener('click', (e) => {
+            // Abaikan tap navigasi jika user sengaja mengklik tombol, atau menekan link Maps
+            if (e.target.closest('button') || e.target.closest('a')) return;
+
+            // Navigasi kiri/kanan hanya berlaku jika sampul sudah dibuka
+            if (currentPage === 0) return;
+
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            
+            // Logika tap pintar: 25% sisi Kiri untuk Balik, 25% sisi Kanan untuk Lanjut
+            // Sisa area 50% di tengah bebas untuk di-scroll vertikal dan menghindari salah klik
+            if (clickX < screenWidth * 0.25) {
+                // Balik Kiri
+                if (currentPage === 1) {
+                    storyUI.style.display = 'none';
+                    updatePage(0);
+                } else if (currentPage > 1) {
+                    updatePage(currentPage - 1);
+                }
+            } else if (clickX > screenWidth * 0.75) {
+                // Lanjut Kanan
+                if (currentPage < totalPages - 1) {
+                    updatePage(currentPage + 1);
+                }
+            }
+        });
+
+        btnRestart.addEventListener('click', (e) => {
+            e.stopPropagation();
+            storyUI.style.display = 'none';
+            tapLeft.style.display = 'none';
+            tapRight.style.display = 'none';
+            
+            for(let i=0; i<totalPages; i++){
+                document.getElementById(`bar-${i}`).style.width = '0%';
+            }
+            
+            updatePage(0);
+        });
+
+    </script>
+</body>
+</html>
