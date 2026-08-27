@@ -1,1 +1,480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invitation - Cinematic Opening</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-text: #ffffff;
+            --secondary-text: rgba(255, 255, 255, 0.7);
+            --bg-dark: #050508;
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--primary-text);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Mencegah scrolling */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+        }
+
+        /* 
+         * MOBILE-FIRST CANVAS LAYOUT 
+         * Desktop akan melihat tampilan virtual phone di tengah layar.
+         * Mobile akan mengisi seluruh layar.
+         */
+        #app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            #app-container {
+                width: 390px;
+                height: 844px;
+                max-height: 95vh;
+                border-radius: 40px;
+                border: 8px solid #1a1a1a;
+                box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05) inset;
+            }
+        }
+
+        #starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .fog-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(5, 5, 8, 0.8) 100%);
+        }
+
+        .portal-door {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(to bottom, #050508, #0a0a14);
+            z-index: 5;
+            transition: transform 2s cubic-bezier(0.76, 0, 0.24, 1);
+            display: flex;
+            align-items: center;
+        }
+
+        .portal-door::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        #door-left {
+            left: 0;
+            transform-origin: left;
+        }
+        #door-left::after { right: 0; }
+
+        #door-right {
+            right: 0;
+            transform-origin: right;
+        }
+        #door-right::after { left: 0; }
+
+        .doors-open #door-left { transform: translateX(-100%); }
+        .doors-open #door-right { transform: translateX(100%); }
+
+        .scene-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 30px;
+            transition: opacity 0.8s ease, transform 1s ease;
+        }
+
+        .scene-content.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            animation: fadeUp 1.5s ease 0.5s forwards;
+            transform: translateY(20px);
+        }
+
+        p.subtitle {
+            font-size: 0.95rem;
+            color: var(--secondary-text);
+            line-height: 1.6;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeUp 1.5s ease 1s forwards;
+            transform: translateY(20px);
+        }
+
+        .cta-wrapper {
+            opacity: 0;
+            animation: fadeUp 1.5s ease 1.5s forwards;
+            transform: translateY(20px);
+        }
+
+        .cta-button {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--primary-text);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            padding: 16px 36px;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 0 0 rgba(255, 255, 255, 0.2);
+            /* Touch target minimum 44px (padding ensures this) */
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: skewX(-20deg);
+            transition: all 0.5s ease;
+        }
+
+        @media (hover: hover) {
+            .cta-button:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.3);
+                box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05);
+                transform: translateY(-2px);
+            }
+            .cta-button:hover::before {
+                left: 150%;
+                transition: all 0.7s ease;
+            }
+        }
+
+        .cta-button:active {
+            transform: scale(0.95) translateY(0);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .ready-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            letter-spacing: 6px;
+            color: #fff;
+            z-index: 11;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .ready-text.show { opacity: 1; }
+        .ready-text.fade { opacity: 0; }
+
+        .white-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s cubic-bezier(0.5, 0, 0.1, 1);
+        }
+
+        .white-flash.active { opacity: 1; }
+
+        .watermark {
+            position: absolute;
+            bottom: calc(var(--safe-bottom) + 30px);
+            right: 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            z-index: 15;
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <!-- Background Layer -->
+        <canvas id="starfield"></canvas>
+        <div class="fog-overlay"></div>
+
+        <!-- Portal Doors (Initial closed state) -->
+        <div class="portal-door" id="door-left"></div>
+        <div class="portal-door" id="door-right"></div>
+
+        <!-- Scene 1: Welcome Content -->
+        <div class="scene-content" id="welcome-scene">
+            <h1>SELAMAT DATANG</h1>
+            <p class="subtitle">Kamu diundang untuk hadir<br>di acara ulang tahunku.</p>
+            <div class="cta-wrapper">
+                <button class="cta-button" id="start-btn" aria-label="Mulai masuk ke undangan">KLIK UNTUK MELANJUTKAN</button>
+            </div>
+        </div>
+
+        <!-- Transition Elements -->
+        <div class="ready-text" id="ready-text">READY?</div>
+        <div class="white-flash" id="white-flash"></div>
+        
+        <!-- Elegant Watermark -->
+        <div class="watermark">By Fadkun.10</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('app-container');
+            
+            let width, height, centerX, centerY;
+            const stars = [];
+            const numStars = 400; // Optimal balance for performance and visuals
+            
+            // Animation States
+            let isWarping = false;
+            let speedMultiplier = 0.5; // Idle speed
+            let targetSpeedMultiplier = 0.5;
+
+            // Setup Canvas size based on container
+            function resize() {
+                width = container.clientWidth;
+                height = container.clientHeight;
+                canvas.width = width;
+                canvas.height = height;
+                centerX = width / 2;
+                centerY = height / 2;
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+
+            // Star Object
+            class Star {
+                constructor() {
+                    this.reset(true);
+                }
+
+                reset(randomZ = false) {
+                    this.x = (Math.random() - 0.5) * width * 2;
+                    this.y = (Math.random() - 0.5) * height * 2;
+                    // Distribute initially, or spawn far away when resetting during animation
+                    this.z = randomZ ? Math.random() * 1000 : 1000;
+                    this.pz = this.z; // Previous Z for drawing streaks
+                    
+                    // Add slight color variations (magical feel)
+                    const colors = ['#ffffff', '#e0f2fe', '#f0f9ff', '#ede9fe'];
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                }
+
+                update() {
+                    this.pz = this.z;
+                    // Move star closer (decrease z)
+                    this.z -= (2 * speedMultiplier);
+
+                    // If star passes the camera, reset it far away
+                    if (this.z < 1) {
+                        this.reset();
+                        this.pz = this.z; // prevent drawing line across screen on reset
+                    }
+                }
+
+                draw() {
+                    // Projection math: x/z, y/z
+                    const fov = 300; // Field of view
+                    const px = (this.x / this.z) * fov + centerX;
+                    const py = (this.y / this.z) * fov + centerY;
+                    
+                    const ppx = (this.x / this.pz) * fov + centerX;
+                    const ppy = (this.y / this.pz) * fov + centerY;
+
+                    // Calculate opacity based on depth
+                    const opacity = Math.min(1, (1000 - this.z) / 500);
+                    
+                    ctx.strokeStyle = this.color;
+                    ctx.globalAlpha = opacity;
+                    
+                    if (isWarping) {
+                        // Draw streaks during warp
+                        ctx.lineWidth = Math.max(0.5, (1000 - this.z) / 300);
+                        ctx.beginPath();
+                        ctx.moveTo(ppx, ppy);
+                        ctx.lineTo(px, py);
+                        ctx.stroke();
+                    } else {
+                        // Draw subtle dots/short streaks during idle
+                        const size = Math.max(0.5, (1000 - this.z) / 500);
+                        ctx.beginPath();
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Initialize Stars
+            for (let i = 0; i < numStars; i++) {
+                stars.push(new Star());
+            }
+
+            // Animation Loop
+            function animate() {
+                // Smooth speed transition
+                speedMultiplier += (targetSpeedMultiplier - speedMultiplier) * 0.05;
+
+                ctx.fillStyle = 'rgba(5, 5, 8, 0.3)'; // Trail effect
+                ctx.fillRect(0, 0, width, height);
+
+                stars.forEach(star => {
+                    star.update();
+                    star.draw();
+                });
+
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            const startBtn = document.getElementById('start-btn');
+            const welcomeScene = document.getElementById('welcome-scene');
+            const readyText = document.getElementById('ready-text');
+            const appContainer = document.getElementById('app-container');
+            const whiteFlash = document.getElementById('white-flash');
+
+            let isTransitioning = false;
+
+            function startCinematicSequence() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+
+                // 1. CLICK: Fade out content immediately
+                welcomeScene.classList.add('hidden');
+
+                // 2. READY: Show brief text
+                setTimeout(() => {
+                    readyText.classList.add('show');
+                }, 500);
+
+                setTimeout(() => {
+                    readyText.classList.remove('show');
+                    readyText.classList.add('fade');
+                }, 1300);
+
+                // 3. DOOR OPENS
+                setTimeout(() => {
+                    appContainer.classList.add('doors-open');
+                }, 1600);
+
+                // 4. STARFIELD FLY FORWARD (Hyperspace)
+                setTimeout(() => {
+                    isWarping = true;
+                    targetSpeedMultiplier = 25; // Accelerate massively
+                }, 2000);
+
+                // 5. EVERYTHING TURNS WHITE
+                setTimeout(() => {
+                    whiteFlash.classList.add('active');
+                    targetSpeedMultiplier = 50; // Final burst of speed
+                }, 3800);
+
+                // 6. REDIRECT to undangan.html
+                setTimeout(() => {
+                    // Redirect using relative URL as strictly requested
+                    window.location.href = "undangan.html";
+                }, 4800); // Total transition time ~4.8 seconds
+            }
+
+            // Event Listeners for Button
+            startBtn.addEventListener('click', startCinematicSequence);
+
+            // Accessibility: allow Enter/Space key to trigger button
+            startBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    startCinematicSequence();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
