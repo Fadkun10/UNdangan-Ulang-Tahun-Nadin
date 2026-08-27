@@ -16,7 +16,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -24,25 +24,29 @@
             --gold-primary: #D4AF37;
             --gold-dark: #8C6D1F;
             --gold-glow: rgba(212, 175, 55, 0.4);
-            
-            --bg-deep: #030305;
+            --bg-deep: #050508;
             --text-main: #FFFFFF;
             --text-dim: #A0A0A5;
 
-            /* Safe Area defaults */
-            --sa-top: env(safe-area-inset-top, 24px);
-            --sa-bottom: env(safe-area-inset-bottom, 24px);
+            /* Safe Area Defaults */
+            --sa-top: env(safe-area-inset-top, 0px);
+            --sa-bottom: env(safe-area-inset-bottom, 0px);
             --sa-left: env(safe-area-inset-left, 0px);
             --sa-right: env(safe-area-inset-right, 0px);
+            
+            /* Responsive Dimensions */
+            --mascot-size: clamp(65px, 20vw, 90px);
+            --bubble-max-w: min(220px, calc(100vw - 110px));
         }
 
         /* 
          * SCROLLBAR COMPLETELY HIDDEN 
-         * Scrolling will still work via touch/mousewheel
+         * Scrolling will still work via touch/mousewheel but visually clean
          */
         html, body, * {
             -ms-overflow-style: none !important; /* IE and Edge */
             scrollbar-width: none !important;    /* Firefox */
+            -webkit-tap-highlight-color: transparent;
         }
         *::-webkit-scrollbar {
             display: none !important;            /* Chrome, Safari, Opera */
@@ -54,7 +58,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -63,10 +66,10 @@
             background-color: var(--bg-deep);
             color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            /* Body starts non-scrollable for Act 1-5 (Card Mode) */
-            overflow-y: hidden;
+            overflow-x: hidden; 
+            overflow-y: hidden; /* Locked until final scroll mode */
             overscroll-behavior-y: none;
+            position: relative;
         }
 
         h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
@@ -76,10 +79,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: drop-shadow(0 4px 20px var(--gold-glow));
+            filter: drop-shadow(0 4px 15px var(--gold-glow));
         }
 
-        /* Asset Wrapper replacing Unicode Emojis */
+        /* Responsive Icons */
         .icon-asset {
             display: inline-block;
             vertical-align: middle;
@@ -87,42 +90,49 @@
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+            pointer-events: none; /* Let clicks pass to buttons */
         }
+        
+        .icon-interactive {
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .icon-interactive:active { transform: scale(0.8) rotate(-15deg); }
 
+        /* Optimized Background */
         #atmosphere-layer {
             position: fixed;
-            inset: 0;
+            inset: -5%; /* Slight bleed for parallax/shake */
             z-index: -5;
             background-image: url('background.png');
             background-size: cover;
             background-position: center top;
-            background-attachment: scroll; /* Better for mobile performance */
-            animation: bgBreathe 20s infinite alternate ease-in-out;
+            opacity: 0.6;
+            will-change: transform, opacity;
+            transition: transform 1s ease-out;
         }
 
         #atmosphere-overlay {
             position: fixed;
             inset: 0;
             z-index: -4;
-            background: 
-                radial-gradient(circle at 50% 30%, rgba(3,3,5,0.2) 0%, rgba(3,3,5,0.85) 70%, #030305 100%),
-                linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(3,3,5,0.95) 100%);
+            background: radial-gradient(circle at 50% 30%, rgba(5,5,8,0.2) 0%, rgba(5,5,8,0.85) 70%, #050508 100%);
             pointer-events: none;
         }
 
         .light-streak {
             position: fixed;
             width: 150vw;
-            height: 10vh;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
-            filter: blur(40px);
+            height: 15vh;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            filter: blur(30px);
             z-index: -3;
             transform: rotate(-35deg);
             pointer-events: none;
-            animation: lightSweep 15s infinite linear;
+            opacity: 0.5;
         }
 
-        /* Preloader */
         #loader {
             position: fixed;
             inset: 0;
@@ -132,55 +142,46 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s cubic-bezier(0.7, 0, 0.3, 1), visibility 1s;
+            transition: opacity 0.8s ease, visibility 0.8s;
         }
-        #loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+        #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        
+        .loader-ring {
+            width: 40px; height: 40px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--gold-primary);
+            border-radius: 50%;
+            animation: spinObj 1s linear infinite;
         }
 
-        #opening-curtain {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-deep);
-            z-index: 5000;
+        /* Tutorial Gesture Overlay */
+        #gesture-tutorial {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 1s;
-            cursor: pointer;
-        }
-        #opening-curtain.opened {
-            transform: translateY(-100vh) scale(1.1);
+            gap: 15px;
+            z-index: 100;
             opacity: 0;
             pointer-events: none;
+            transition: opacity 0.5s ease;
         }
-
-        .opening-hint {
-            font-size: 0.8rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--gold-primary);
-            margin-top: 40px;
-            animation: bobbing 2s infinite ease-in-out;
-            padding: 15px 30px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 30px;
-            background: rgba(212, 175, 55, 0.05);
-            backdrop-filter: blur(5px);
-        }
+        #gesture-tutorial.visible { opacity: 1; }
+        .gesture-text { font-size: 0.7rem; letter-spacing: 3px; color: var(--gold-primary); text-transform: uppercase; white-space: nowrap; }
+        .gesture-arrow { animation: swipeAnim 2s infinite ease-in-out; font-size: 1.2rem; color: var(--gold-light); }
+        .gesture-arrow.left { animation-direction: reverse; }
 
         #app-container {
             position: relative;
             width: 100%;
-            /* min-height will adapt based on mode */
-            min-height: 100svh;
-            perspective: 2000px; 
+            min-height: 100svh; /* svh for mobile accuracy */
+            perspective: 1500px; 
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         #card-deck {
@@ -191,90 +192,93 @@
             justify-content: center;
             align-items: center;
             transform-style: preserve-3d;
-            /* Container transitions smoothly when switching modes */
-            transition: all 1s ease;
         }
 
-        /* Card Base Styles */
         .party-card {
             position: absolute;
             width: 90%;
-            /* Fluid width based on mobile */
-            max-width: 400px;
-            min-height: 60svh;
-            padding: 40px 20px;
+            max-width: 420px; /* Optimal reading width */
+            min-height: 65svh;
+            padding: 40px 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
             
-            /* Glassmorphism */
-            background: rgba(15, 15, 20, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 30px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            /* Performance: Only blur the active card */
+            background: rgba(15, 15, 20, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05);
             
-            /* Initial state */
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transform: translateZ(-500px) translateY(100px) rotateX(15deg);
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1), 
-                        opacity 0.6s ease, visibility 0.6s;
-            transform-style: preserve-3d;
+            will-change: transform, opacity;
+            
+            /* Cinematic start position */
+            transform: translateZ(-800px) translateY(150px) rotateX(25deg);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        opacity 0.6s ease, visibility 0.6s, filter 0.6s;
         }
 
-        .card-content {
-            transform: translateZ(30px); 
-            width: 100%;
-            position: relative;
-            z-index: 2;
+        /* Layering and Overlaps inside card */
+        .card-content { transform: translateZ(40px); position: relative; z-index: 2; width: 100%; }
+        
+        .huge-bg-text {
+            position: absolute;
+            font-size: clamp(4rem, 25vw, 8rem);
+            font-weight: 900;
+            color: rgba(255,255,255,0.02);
+            white-space: nowrap;
+            top: 5%; left: -5%;
+            pointer-events: none;
+            z-index: 0;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: -2px;
+            transform: translateZ(-20px);
         }
 
+        /* Dynamic Card States */
         .party-card.active {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
             transform: translateZ(0) translateY(0) rotateX(0);
             z-index: 10;
+            /* Activate heavy blur only when active for perf */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            background: rgba(15, 15, 20, 0.5);
         }
         .party-card.prev {
             opacity: 0;
             visibility: hidden;
-            transform: translateZ(200px) translateY(-150px) rotateX(-20deg);
+            transform: translateZ(300px) translateY(-100px) rotateX(-15deg);
             z-index: 15;
+            backdrop-filter: none; -webkit-backdrop-filter: none;
         }
         .party-card.next {
-            opacity: 0.8;
+            opacity: 0.7;
             visibility: visible;
             pointer-events: none;
-            transform: translateZ(-100px) translateY(40px) rotateX(5deg);
+            transform: translateZ(-150px) translateY(50px) rotateX(8deg);
             z-index: 5;
-            filter: blur(2px) brightness(0.7);
+            filter: brightness(0.6);
+            backdrop-filter: none; -webkit-backdrop-filter: none;
         }
         .party-card.next-far {
             opacity: 0;
             visibility: hidden;
-            transform: translateZ(-300px) translateY(80px) rotateX(10deg);
+            transform: translateZ(-400px) translateY(100px) rotateX(15deg);
             z-index: 1;
+            backdrop-filter: none; -webkit-backdrop-filter: none;
         }
 
-        /* Huge background typography inside cards */
-        .huge-bg-text {
-            position: absolute;
-            font-size: clamp(4rem, 25vw, 8rem);
-            font-weight: 900;
-            color: rgba(255,255,255,0.03);
-            white-space: nowrap;
-            top: 10%;
-            left: -10%;
-            pointer-events: none;
-            z-index: 0;
-            font-family: 'Playfair Display', serif;
-            letter-spacing: -5px;
+        /* Drag Interaction Class */
+        .party-card.is-dragging {
+            transition: none !important; /* Disable CSS transition during JS drag */
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
         }
 
         .hero-photo-container {
@@ -282,7 +286,9 @@
             width: 100%;
             aspect-ratio: 4/5;
             margin: 0 auto 30px auto;
-            perspective: 1000px;
+            border-radius: 20px;
+            /* Asymmetric setup */
+            transform: translateX(10px) rotate(2deg);
         }
         
         .hero-photo-layer {
@@ -292,35 +298,34 @@
             object-fit: cover;
             width: 100%;
             height: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.9);
-            transform: translateZ(40px);
+            box-shadow: -15px 20px 40px rgba(0,0,0,0.8);
         }
 
         .hero-typography-overlap {
             position: absolute;
-            bottom: -20px;
-            left: -10px;
-            font-size: clamp(3rem, 15vw, 5rem);
+            bottom: -15px;
+            left: -30px;
+            font-size: clamp(3rem, 15vw, 4.5rem);
             line-height: 0.85;
             text-align: left;
             z-index: 3;
-            transform: translateZ(70px);
             text-shadow: 0 10px 30px rgba(0,0,0,0.9);
-            pointer-events: none;
+            transform: translateZ(50px) rotate(-3deg);
         }
 
-        /* Premium Buttons */
+        /* Buttons */
         .btn-luxe {
             position: relative;
-            background: rgba(20, 20, 25, 0.8);
+            background: rgba(25, 25, 30, 0.7);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--gold-primary);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
             color: var(--text-main);
-            padding: 16px 24px;
-            border-radius: 50px;
+            padding: 18px 24px;
+            border-radius: 16px;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: clamp(0.85rem, 4vw, 1rem);
+            font-size: clamp(0.9rem, 4vw, 1rem);
             letter-spacing: 2px;
             text-transform: uppercase;
             cursor: pointer;
@@ -330,313 +335,246 @@
             justify-content: center;
             gap: 10px;
             text-decoration: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(212,175,55,0.1);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(212,175,55,0.05);
             transition: all 0.3s ease;
-            /* Touch target optimization */
-            min-height: 50px;
             width: 100%;
+            min-height: 56px; /* Touch target */
         }
-        
-        .btn-luxe:active { transform: scale(0.96); background: var(--gold-primary); color: #000; }
+        .btn-luxe:active { transform: scale(0.95); background: rgba(212, 175, 55, 0.2); border-color: var(--gold-primary); }
 
         #mascot-layer {
             position: fixed;
-            /* Safe area positioning - highly optimized for mobile portrait */
-            bottom: max(48px, calc(var(--sa-bottom) + 32px));
-            right: 15px;
+            /* Respect Safe Area */
+            bottom: max(30px, calc(var(--sa-bottom) + 20px));
+            right: max(15px, var(--sa-right));
             z-index: 1000;
+            pointer-events: none; /* Let clicks pass except on children */
             display: flex;
-            flex-direction: column;
             align-items: flex-end;
-            pointer-events: none; /* Let clicks pass through empty space */
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.8s;
+            justify-content: flex-end;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s;
         }
 
         /* Mascot States */
-        #mascot-layer.pos-left { transform: translateX(calc(-100vw + 120px)); align-items: flex-start; }
-        #mascot-layer.pos-center { transform: translateX(-35vw) translateY(-10vh) scale(1.2); }
-        #mascot-layer.pos-hide { transform: translateY(150px) scale(0.8); opacity: 0; }
+        #mascot-layer.hide { opacity: 0; transform: translateY(100px); pointer-events: none; }
+        #mascot-layer.pos-left { transform: translateX(calc(-100vw + var(--mascot-size) + 40px)); }
+        #mascot-layer.pos-center { transform: translateX(-35vw) translateY(-5vh) scale(1.1); }
 
         #mascot-img {
-            /* Responsive clamp for mobile screens */
-            width: clamp(75px, 22vw, 110px); 
+            width: var(--mascot-size); 
             height: auto;
             pointer-events: auto;
-            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.8));
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.7));
             animation: mascotBreathe 4s infinite ease-in-out;
             transform-origin: bottom center;
             cursor: pointer;
-            transition: filter 0.2s, transform 0.2s;
+            transition: transform 0.2s;
+            will-change: transform;
         }
-        #mascot-img:active { filter: drop-shadow(0 5px 10px rgba(0,0,0,0.9)) brightness(0.8); transform: scale(0.9); }
+        #mascot-img:active { transform: scale(0.9) translateY(5px) !important; filter: brightness(0.8); }
 
-        /* Dark Premium Glass Bubble */
+        /* Adaptive Speech Bubble */
         #mascot-bubble {
-            background: rgba(10, 10, 12, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 12px 16px;
+            position: absolute;
+            bottom: 90%; /* Anchor above mascot */
+            right: 50%;  /* Shift left to stay in screen */
+            transform-origin: bottom right;
+            transform: translateY(15px) scale(0.8);
+            
+            background: rgba(15, 15, 18, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 18px;
             border-radius: 20px 20px 0 20px;
             color: var(--text-main);
-            font-size: clamp(0.75rem, 3.5vw, 0.9rem);
+            font-size: clamp(0.75rem, 3.5vw, 0.85rem);
             font-weight: 500;
             line-height: 1.4;
-            max-width: 220px;
-            margin-bottom: 12px;
-            margin-right: 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 15px rgba(255,255,255,0.05);
+            max-width: var(--bubble-max-w);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
             
             opacity: 0;
             pointer-events: none;
-            transform: translateY(20px) scale(0.8);
-            transform-origin: bottom right;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: pre-wrap; /* allow wrapping */
         }
 
+        #mascot-bubble.visible { opacity: 1; transform: translateY(-10px) scale(1); }
+        
+        /* If Mascot is on left, flip bubble orientation */
         #mascot-layer.pos-left #mascot-bubble {
+            right: auto; left: 50%;
             border-radius: 20px 20px 20px 0;
-            margin-right: 0; margin-left: 10px;
             transform-origin: bottom left;
         }
 
-        #mascot-bubble.visible { opacity: 1; transform: translateY(0) scale(1); }
-
-        #ui-layer {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 900;
-            padding: var(--sa-top) var(--sa-right) var(--sa-bottom) var(--sa-left);
-        }
-
-        .progress-track {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: opacity 0.5s;
-        }
-
-        .progress-dot {
-            width: 3px;
-            height: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            transition: all 0.4s ease;
-        }
-        .progress-dot.active {
-            height: 35px;
-            background: var(--gold-primary);
-            box-shadow: 0 0 10px var(--gold-glow);
-        }
-
-        #nav-controls {
-            position: absolute;
-            bottom: max(20px, calc(var(--sa-bottom) + 15px));
-            left: 20px;
-            display: flex;
-            gap: 15px;
-            pointer-events: auto;
-            transition: opacity 0.5s;
-        }
-
-        .nav-btn {
-            background: rgba(20, 20, 25, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-main);
-            width: 44px; /* Touch target optimized */
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .nav-btn:active { transform: scale(0.9); }
-        .nav-btn:disabled { opacity: 0; pointer-events: none; }
-
-        /* Flash Effect */
         #grand-flash {
-            position: fixed;
-            inset: 0;
-            background: #fff;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s ease;
+            position: fixed; inset: 0;
+            background: #fff; z-index: 9999;
+            opacity: 0; pointer-events: none;
+            transition: opacity 1s ease-out;
         }
 
-        #particles {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 9998;
-            overflow: hidden;
+        #particles-container {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 9998; overflow: hidden;
         }
         .particle { position: absolute; border-radius: 50%; opacity: 0; }
 
-        /* 
-         * When .is-scroll-mode is added to body, we break the 3D absolute 
-         * stack and let elements flow naturally downwards.
-         */
+        /* The Magic Class that turns deck into a scrollable page */
         body.is-scroll-mode {
-            overflow-y: auto !important; /* Enable scrolling */
-            touch-action: pan-y;
+            overflow-y: auto !important;
+            touch-action: pan-y; /* Enable vertical touch scroll */
         }
-
         body.is-scroll-mode #app-container {
-            align-items: flex-start; 
-            min-height: 100%;
+            overflow: visible; align-items: flex-start;
         }
-
         body.is-scroll-mode #card-deck {
-            flex-direction: column;
-            justify-content: flex-start;
+            flex-direction: column; justify-content: flex-start;
             height: auto;
-            gap: 8vh; 
-            padding-top: 15vh;
-            /* CRUCIAL: Massive bottom space for safe scrolling past nav bars */
+            gap: 20px; 
+            padding-top: max(80px, calc(var(--sa-top) + 40px));
+            /* MASSIVE SAFE SPACE AT BOTTOM */
             padding-bottom: max(250px, calc(var(--sa-bottom) + 200px)); 
+            transform-style: flat; /* Perf */
         }
 
         body.is-scroll-mode .party-card {
             position: relative; 
-            width: 100%; 
-            max-width: 100%; /* Take full mobile width */
+            width: 100%; max-width: 100%; 
             min-height: auto; 
-            padding: 10vh 25px; /* Spacing between sections */
-            /* Strip the "card" look to blend into a single editorial page */
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: none;
-            box-shadow: none;
+            padding: 10vh 25px; 
             
-            /* Reset all 3D positioning */
-            transform: none !important; 
-            opacity: 1 !important;
-            visibility: visible !important;
-            pointer-events: auto !important;
+            /* Strip 3D & Container styling for editorial look */
+            background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none;
+            border: none; box-shadow: none;
+            
+            /* Reset transforms */
+            transform: none !important; opacity: 1 !important; visibility: visible !important;
+            pointer-events: auto !important; z-index: 1 !important;
         }
+        
+        /* Specific tweaks for editorial mode */
+        body.is-scroll-mode .huge-bg-text { display: none; } /* Too messy in scroll mode */
+        body.is-scroll-mode .card-content { transform: none; }
 
-        body.is-scroll-mode #ui-layer { opacity: 0; }
-
-        /* Interactive micro-animations */
-        .interactive-obj { cursor: pointer; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .interactive-obj:active { transform: scale(0.8) rotate(-15deg); filter: brightness(1.5); }
-
-        @keyframes bgBreathe { 0% { transform: scale(1.02); } 100% { transform: scale(1.15); } }
-        @keyframes lightSweep { 0% { top: -20%; left: -50%; } 100% { top: 120%; left: 100%; } }
-        @keyframes mascotBreathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes bobbing { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(-8px); opacity: 1; } }
+        @keyframes mascotBreathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         @keyframes spinObj { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes swipeAnim { 0%, 100% { transform: translateX(0); opacity: 0.5;} 50% { transform: translateX(10px); opacity: 1;} }
+        @keyframes openingPulse { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
 
+        /* Reduced Motion Fallback */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+            }
+            .party-card { transition: opacity 0.3s ease !important; transform: none !important; }
+        }
+        
     </style>
 </head>
 <body>
 
+    <!-- PRELOADER -->
     <div id="loader">
-        <h1 class="serif gold-text" style="font-size: 2rem; letter-spacing: 3px; animation: bobbing 2s infinite;">PREPARING</h1>
+        <div class="loader-ring"></div>
+        <p class="serif gold-text" style="margin-top: 20px; font-size: 0.9rem; letter-spacing: 3px;">PREPARING</p>
     </div>
 
-    <!-- Background layers -->
+    <!-- BACKGROUND LAYERS -->
     <div id="atmosphere-layer"></div>
     <div id="atmosphere-overlay"></div>
-    <div class="light-streak" style="top: 10%; left: -20%;"></div>
-    <div class="light-streak" style="top: 60%; width: 200vw; animation-delay: 5s;"></div>
+    <div class="light-streak" style="top: -10%; left: -20%;"></div>
+    <div class="light-streak" style="top: 70%; left: 0%; width: 200vw; animation-delay: 2s; opacity: 0.3;"></div>
 
     <div id="grand-flash"></div>
-    <div id="particles"></div>
-
-    <!-- Act 01: The Curtain -->
-    <div id="opening-curtain">
-        <div style="text-align: center; padding: 20px;">
-            <h1 class="serif gold-text" style="font-size: clamp(2.5rem, 10vw, 4rem); margin-bottom: 10px; opacity: 0; transform: translateY(20px); transition: all 1s ease 0.5s;" id="open-title">YOU'RE INVITED</h1>
-            <div class="opening-hint" id="btn-open-envelope" style="opacity: 0; transition: opacity 1s ease 1.5s;">
-                TAP TO OPEN
-            </div>
-        </div>
-    </div>
+    <div id="particles-container"></div>
 
     <main id="app-container">
         
+        <!-- Swipe Tutorial (Only shows on Card 0) -->
+        <div id="gesture-tutorial">
+            <div class="gesture-arrow left">&larr;</div>
+            <div class="gesture-text">GESER KARTU</div>
+            <div class="gesture-arrow">&rarr;</div>
+        </div>
+
         <div id="card-deck">
             
-            <!-- SECTION 1: TITLE -->
+            <!-- SECTION 1: TITLE / OPENING -->
             <section class="party-card active" data-index="0">
-                <div class="huge-bg-text">PARTY</div>
-                <div class="card-content">
-                    <img src="discoball.png" alt="Disco" class="icon-asset interactive-obj" style="width: clamp(60px, 20vw, 90px); height: auto; margin-bottom: 20px;" onclick="this.style.animation='spinObj 1s linear'">
+                <div class="huge-bg-text">NIGHT</div>
+                <div class="card-content" style="text-align: center;">
+                    <img src="discoball.png" alt="" class="icon-asset icon-interactive" style="width: clamp(70px, 22vw, 100px); margin-bottom: 30px;" onclick="this.style.animation='spinObj 1s linear'">
                     
-                    <h1 class="serif gold-text" style="font-size: clamp(3rem, 15vw, 5rem); line-height: 1; margin-bottom: 10px;">
+                    <h1 class="serif gold-text" style="font-size: clamp(3.2rem, 16vw, 5rem); line-height: 0.9; margin-bottom: 15px; display: inline-block; text-align: left;">
                         BIRTHDAY<br>NIGHT
                     </h1>
-                    <img src="sparkles.png" alt="Sparkles" class="icon-asset" style="width: clamp(30px, 10vw, 40px); margin-top: -20px; margin-bottom: 20px;">
+                    <img src="sparkles.png" alt="" class="icon-asset" style="width: clamp(35px, 10vw, 50px); position: absolute; top: -10px; right: -10px;">
                     
-                    <p style="color: var(--text-dim); font-size: clamp(0.75rem, 3vw, 0.85rem); letter-spacing: 4px; text-transform: uppercase;">Premium Experience</p>
+                    <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; margin-top: 20px;">
+                        Premium Experience
+                    </p>
                 </div>
             </section>
 
             <!-- SECTION 2: HERO & WELCOME -->
             <section class="party-card next" data-index="1">
-                <div class="huge-bg-text" style="top: 30%; font-size: 25vw;">HELLO</div>
+                <div class="huge-bg-text" style="top: 25%; font-size: 20vw;">HELLO</div>
                 <div class="card-content">
                     <div class="hero-photo-container">
+                        <!-- Use Base64 tiny placeholder for fallback while testing -->
                         <img src="foto-orang.png" alt="Host" class="hero-photo-layer" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
                         <h2 class="serif gold-text hero-typography-overlap">CELE<br>BRATE</h2>
                     </div>
                     
-                    <p style="font-size: clamp(1rem, 5vw, 1.2rem); line-height: 1.6; font-weight: 300; margin-top: 20px;">
-                        It’s my birthday, and I’d love to celebrate it with you.
-                    </p>
-                    <p style="font-size: clamp(0.85rem, 4vw, 1rem); line-height: 1.5; color: var(--text-dim); margin-top: 15px;">
-                        Yuk, dress up dan nikmatin malamnya bareng-bareng! 
-                        <img src="heart-black.png" alt="" class="icon-asset" style="height: 1em; margin-left: 5px;">
-                    </p>
+                    <div style="background: linear-gradient(180deg, rgba(15,15,20,0) 0%, rgba(15,15,20,0.8) 100%); padding: 20px; border-radius: 16px; margin-top: -40px; position: relative; z-index: 5;">
+                        <p style="font-size: clamp(1rem, 5vw, 1.2rem); line-height: 1.5; font-weight: 300;">
+                            It’s my birthday, and I’d love to celebrate it with you.
+                        </p>
+                        <p style="font-size: clamp(0.85rem, 4vw, 0.95rem); line-height: 1.5; color: var(--text-dim); margin-top: 15px;">
+                            Yuk, dress up dan nikmatin malamnya bareng-bareng! 
+                            <img src="heart-black.png" alt="" class="icon-asset" style="height: 1em; margin-left: 5px;">
+                        </p>
+                    </div>
                 </div>
             </section>
 
             <!-- SECTION 3: DATETIME -->
             <section class="party-card next-far" data-index="2">
-                <div class="huge-bg-text" style="font-size: 20vw; top: 15%;">WHEN</div>
-                <div class="card-content">
-                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px;">DATE</p>
-                    <div class="serif" style="font-size: clamp(4rem, 20vw, 6rem); background: linear-gradient(180deg, #fff, #555); -webkit-background-clip: text; color: transparent; line-height: 1;">
+                <div class="huge-bg-text" style="font-size: 25vw; top: 15%;">WHEN</div>
+                <div class="card-content" style="text-align: center;">
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 15px;">DATE</p>
+                    
+                    <div class="serif" style="font-size: clamp(5rem, 25vw, 7rem); color: rgba(255,255,255,0.9); line-height: 1; text-shadow: 0 10px 20px rgba(0,0,0,0.5);">
                         12
                     </div>
-                    <div class="serif gold-text" style="font-size: clamp(1.5rem, 8vw, 2.5rem); margin-bottom: 40px;">
+                    <div class="serif gold-text" style="font-size: clamp(1.6rem, 8vw, 2.2rem); margin-bottom: 40px; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 15px; display: inline-block;">
                         September 2026
                     </div>
                     
-                    <div style="width: 50%; height: 1px; background: rgba(212,175,55,0.3); margin: 0 auto 30px auto;"></div>
-                    
-                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px;">TIME</p>
-                    <div style="font-size: clamp(1.2rem, 6vw, 1.8rem); font-weight: 300;">17.00 – 20.00 WIB</div>
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px; margin-top: 10px;">TIME</p>
+                    <div style="font-size: clamp(1.3rem, 6vw, 1.8rem); font-weight: 300;">17.00 – 20.00 WIB</div>
                 </div>
             </section>
 
             <!-- SECTION 4: DRESS CODE -->
             <section class="party-card" data-index="3">
-                <div class="huge-bg-text" style="top: 10%; font-size: 20vw;">LOOK</div>
-                <div class="card-content">
-                    <h2 class="serif gold-text" style="font-size: clamp(2rem, 10vw, 3rem); margin-bottom: 15px;">DRESS CODE</h2>
-                    <p style="font-size: clamp(0.85rem, 4vw, 1rem); color: var(--text-dim); margin-bottom: 30px;">Bring your best club look</p>
+                <div class="huge-bg-text" style="top: 10%; font-size: 22vw;">LOOK</div>
+                <div class="card-content" style="text-align: center;">
+                    <h2 class="serif gold-text" style="font-size: clamp(2.2rem, 11vw, 3rem); margin-bottom: 10px;">DRESS CODE</h2>
+                    <p style="font-size: clamp(0.9rem, 4vw, 1rem); color: var(--text-dim); margin-bottom: 40px;">Bring your best club look</p>
                     
                     <div style="display: flex; gap: 15px; justify-content: center; width: 100%;">
-                        <div style="background: rgba(0,0,0,0.5); padding: 25px 15px; border-radius: 20px; flex: 1; border: 1px solid rgba(255,255,255,0.05);">
-                            <img src="heart-black.png" alt="Black" class="icon-asset interactive-obj" style="width: clamp(40px, 10vw, 50px); margin-bottom: 10px;">
-                            <div style="font-weight: 600; font-size: clamp(0.85rem, 4vw, 1rem);">Atasan<br>Hitam</div>
+                        <div style="background: rgba(10,10,12,0.8); padding: 30px 15px; border-radius: 20px; flex: 1; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                            <img src="heart-black.png" alt="" class="icon-asset icon-interactive" style="width: clamp(45px, 12vw, 60px); margin-bottom: 15px;">
+                            <div style="font-weight: 600; font-size: clamp(0.9rem, 4vw, 1rem);">Atasan<br>Hitam</div>
                         </div>
-                        <div style="background: rgba(0,0,0,0.5); padding: 25px 15px; border-radius: 20px; flex: 1; border: 1px solid rgba(255,255,255,0.05);">
-                            <img src="heart-brown.png" alt="Brown" class="icon-asset interactive-obj" style="width: clamp(40px, 10vw, 50px); margin-bottom: 10px;">
-                            <div style="font-weight: 600; font-size: clamp(0.85rem, 4vw, 1rem);">Bawahan<br>Cokelat</div>
+                        <div style="background: rgba(10,10,12,0.8); padding: 30px 15px; border-radius: 20px; flex: 1; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+                            <img src="heart-brown.png" alt="" class="icon-asset icon-interactive" style="width: clamp(45px, 12vw, 60px); margin-bottom: 15px;">
+                            <div style="font-weight: 600; font-size: clamp(0.9rem, 4vw, 1rem);">Bawahan<br>Cokelat</div>
                         </div>
                     </div>
                 </div>
@@ -645,24 +583,25 @@
             <!-- SECTION 5: GIFT & LOCATION -->
             <section class="party-card" data-index="4">
                 <div class="huge-bg-text" style="top: 5%; font-size: 25vw;">INFO</div>
-                <div class="card-content">
+                <div class="card-content" style="text-align: center;">
                     <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 15px;">GIFT</p>
-                    <p style="font-size: clamp(0.9rem, 4vw, 1rem); line-height: 1.6; font-weight: 300; margin-bottom: 15px;">
+                    <p style="font-size: clamp(0.95rem, 4.5vw, 1.1rem); line-height: 1.6; font-weight: 300; margin-bottom: 15px;">
                         Untuk kado, nggak perlu repot bawa hadiah yaa.
                     </p>
-                    <p style="font-size: clamp(0.8rem, 3.5vw, 0.9rem); color: var(--text-dim); line-height: 1.5; margin-bottom: 30px;">
+                    <p style="font-size: clamp(0.85rem, 3.8vw, 0.95rem); color: var(--text-dim); line-height: 1.5; margin-bottom: 40px;">
                         Buat yang mau kasih tanda kasih, bisa melalui amplop atau QR yang sudah disediakan di lokasi.
                     </p>
                     
-                    <div style="width: 50%; height: 1px; background: rgba(212,175,55,0.3); margin: 0 auto 30px auto;"></div>
+                    <div style="width: 30%; height: 1px; background: rgba(212,175,55,0.4); margin: 0 auto 30px auto;"></div>
 
-                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 10px;">LOCATION</p>
-                    <div class="serif" style="font-size: clamp(1.2rem, 6vw, 1.8rem); margin-bottom: 5px;">Pondok Rangi Resto</div>
-                    <p style="font-size: clamp(0.85rem, 4vw, 1rem); color: var(--text-dim); margin-bottom: 25px;">Rawasari</p>
+                    <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold-primary); margin-bottom: 15px;">LOCATION</p>
+                    <div class="serif" style="font-size: clamp(1.4rem, 7vw, 1.8rem); margin-bottom: 5px; color: #fff;">Pondok Rangi Resto</div>
+                    <p style="font-size: clamp(0.9rem, 4vw, 1rem); color: var(--text-dim); margin-bottom: 30px;">Rawasari</p>
                     
+                    <!-- Location is fully interactive -->
                     <a href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x2e69f5abae149179:0x25e0fd0baabdde63?entry=s&sa=X&ved=2ahUKEwiU-s_m276WAxUVk-EIHcbyJW8Q4kB6BAgcEAA&hl=en" 
                        target="_blank" rel="noopener noreferrer" 
-                       class="btn-luxe interactive-obj" id="btn-map">
+                       class="btn-luxe" id="btn-map">
                         VIEW ON MAPS &rarr;
                     </a>
                 </div>
@@ -670,20 +609,20 @@
 
             <!-- SECTION 6: THE REVEAL TRIGGER -->
             <section class="party-card" data-index="5">
-                <div class="huge-bg-text" style="top: 20%; left: -10%; font-size: 30vw;">RSVP</div>
-                <div class="card-content">
-                    <img src="toast-glass.png" alt="Cheers" class="icon-asset interactive-obj" style="width: clamp(80px, 25vw, 120px); margin-bottom: 20px;">
+                <div class="huge-bg-text" style="top: 20%; left: -10%; font-size: 25vw;">RSVP</div>
+                <div class="card-content" style="text-align: center;">
+                    <img src="toast-glass.png" alt="" class="icon-asset icon-interactive" style="width: clamp(80px, 25vw, 120px); margin-bottom: 30px;">
                     
-                    <p style="font-size: clamp(1rem, 5vw, 1.2rem); line-height: 1.6; font-weight: 300; margin-bottom: 20px; font-style: italic;">
+                    <p style="font-size: clamp(1.05rem, 5vw, 1.2rem); line-height: 1.5; font-weight: 300; margin-bottom: 25px; font-style: italic; color: #fff;">
                         "Yang penting datang, karena kehadiran kalian yang bikin malam ini makin seru."
                     </p>
-                    <h2 class="serif gold-text" style="font-size: clamp(2rem, 12vw, 3.5rem); margin-bottom: 40px;">
+                    <h2 class="serif gold-text" style="font-size: clamp(2.2rem, 12vw, 3.5rem); margin-bottom: 40px;">
                         See you there!
                     </h2>
                     
                     <!-- THE MAGIC BUTTON -->
-                    <button class="btn-luxe interactive-obj" id="btn-grand-reveal" style="padding: 20px; font-size: clamp(1rem, 5vw, 1.2rem);">
-                        LET'S PARTY <img src="sparkles.png" alt="" class="icon-asset" style="height: 1em; margin-left: 5px;">
+                    <button class="btn-luxe" id="btn-grand-reveal" style="padding: 22px; font-size: clamp(1rem, 5vw, 1.2rem);">
+                        LET'S PARTY <img src="sparkles.png" alt="" class="icon-asset" style="height: 1.2em; margin-left: 5px;">
                     </button>
                 </div>
             </section>
@@ -691,15 +630,7 @@
         </div>
     </main>
 
-    <div id="ui-layer">
-        <div class="progress-track" id="progress-dots"></div>
-        <div id="nav-controls">
-            <button class="nav-btn" id="btn-prev" disabled>&larr;</button>
-        </div>
-    </div>
-
-    <!-- The Host -->
-    <div id="mascot-layer" class="pos-default">
+    <div id="mascot-layer" class="hide">
         <div id="mascot-bubble"></div>
         <img src="maskot.png" alt="Host" id="mascot-img" onerror="this.style.display='none'">
     </div>
@@ -707,62 +638,72 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // Core DOM Elements
+            // Core DOM
             const body = document.body;
             const loader = document.getElementById('loader');
-            const openingCurtain = document.getElementById('opening-curtain');
-            const openTitle = document.getElementById('open-title');
-            const btnOpenEnvelope = document.getElementById('btn-open-envelope');
-            
-            const cards = document.querySelectorAll('.party-card');
+            const cards = Array.from(document.querySelectorAll('.party-card'));
             const totalCards = cards.length;
+            const gestureTutorial = document.getElementById('gesture-tutorial');
             
-            const btnPrev = document.getElementById('btn-prev');
-            const progressTrack = document.getElementById('progress-dots');
-            
-            const flash = document.getElementById('grand-flash');
             const btnGrandReveal = document.getElementById('btn-grand-reveal');
+            const flash = document.getElementById('grand-flash');
+            const bgLayer = document.getElementById('atmosphere-layer');
             
             let currentIndex = 0;
             let isScrollMode = false;
-            let actPhase = 0; // 0: loading, 1: curtain, 2: cards, 3: free scroll
-
-            // --- 1. ASSET PRELOADING ---
-            const requiredAssets = [
-                'background.png', 'foto-orang.png', 'maskot.png', 
-                'discoball.png', 'sparkles.png', 'heart-black.png', 
-                'heart-brown.png', 'toast-glass.png'
-            ];
+            let hasSwiped = false; // Track if user knows how to swipe
             
+            // Interaction State
+            let startX = 0;
+            let startY = 0;
+            let currentX = 0;
+            let isDragging = false;
+
+            // --- 1. ASSET PRELOADING (Priority System) ---
+            const priorityAssets = ['background.png', 'maskot.png', 'discoball.png'];
             let loadedCount = 0;
 
             function initOpening() {
                 loader.classList.add('hidden');
-                actPhase = 1;
+                
+                // Show Card 0
                 setTimeout(() => {
-                    openTitle.style.opacity = '1';
-                    openTitle.style.transform = 'translateY(0)';
-                    btnOpenEnvelope.style.opacity = '1';
-                }, 300);
+                    updateCardClasses();
+                    mascot.show();
+                    mascot.say("Hai! Aku yang bakal nemenin kamu malam ini.", 2500);
+                    
+                    // Show tutorial slightly after
+                    setTimeout(() => {
+                        if(!hasSwiped && !isScrollMode) {
+                            mascot.say("Geser ke kiri atau kanan buat lanjut ya.", 4000);
+                            gestureTutorial.classList.add('visible');
+                        }
+                    }, 2800);
+                }, 500);
             }
 
-            if(requiredAssets.length > 0) {
-                requiredAssets.forEach(src => {
+            // Simple preloader
+            if(priorityAssets.length > 0) {
+                priorityAssets.forEach(src => {
                     const img = new Image();
-                    img.onload = () => { loadedCount++; if(loadedCount === requiredAssets.length) initOpening(); };
-                    img.onerror = () => { loadedCount++; if(loadedCount === requiredAssets.length) initOpening(); };
+                    img.onload = () => { loadedCount++; if(loadedCount === priorityAssets.length) initOpening(); };
+                    img.onerror = () => { loadedCount++; if(loadedCount === priorityAssets.length) initOpening(); };
                     img.src = src;
                 });
-                setTimeout(() => { if (actPhase === 0) initOpening(); }, 3000);
+                // Fallback timeout
+                setTimeout(initOpening, 3000);
             } else {
                 initOpening();
             }
 
+            // --- 2. SMART MASCOT LOGIC ---
             const mascot = {
                 layer: document.getElementById('mascot-layer'),
                 bubble: document.getElementById('mascot-bubble'),
                 img: document.getElementById('mascot-img'),
                 timer: null,
+                
+                show() { this.layer.classList.remove('hide'); },
                 
                 say(text, duration = 4000) {
                     clearTimeout(this.timer);
@@ -772,7 +713,7 @@
                         this.bubble.textContent = text;
                         this.bubble.classList.add('visible');
                         
-                        // Micro bounce
+                        // Bounce interaction
                         this.img.style.transform = 'scale(1.05) translateY(-5px)';
                         setTimeout(() => this.img.style.transform = '', 200);
 
@@ -785,112 +726,150 @@
                 },
 
                 move(positionClass) {
-                    this.layer.className = ''; 
+                    this.layer.className = ''; // reset
                     if (positionClass) this.layer.classList.add(positionClass);
                 },
                 
                 poke() {
-                    const jokes = ["Aw! Jangan dicubit 😭", "Fokus ke undangannya dong 👀", "Let's party! 🪩"];
+                    const jokes = ["Aw! Jangan ditekan 😭", "Fokus ke undangannya dong 👀", "Let's party! 🪩"];
                     this.say(jokes[Math.floor(Math.random() * jokes.length)], 3000);
                 }
             };
 
-            mascot.img.addEventListener('click', () => mascot.poke());
-
-            openingCurtain.addEventListener('click', () => {
-                if (actPhase !== 1) return;
-                
-                openingCurtain.classList.add('opened');
-                actPhase = 2;
-                buildProgressDots();
-                updateCards(0);
-                
-                setTimeout(() => mascot.say("Eh, akhirnya datang juga! 👀", 4000), 1000);
+            mascot.img.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent passing to cards
+                mascot.poke();
             });
 
-            function buildProgressDots() {
-                progressTrack.innerHTML = '';
-                for(let i = 0; i < totalCards; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'progress-dot';
-                    progressTrack.appendChild(dot);
-                }
+            // --- 3. SWIPE & DRAG PHYSICS ---
+            
+            // Helper to navigate
+            function goTo(index) {
+                if (isScrollMode || index < 0 || index >= totalCards) return;
+                currentIndex = index;
+                hasSwiped = true; 
+                gestureTutorial.classList.remove('visible'); // Hide tutorial permanently
+                
+                updateCardClasses();
+                handleStoryBeats(currentIndex);
+                
+                // Subtle background parallax
+                bgLayer.style.transform = `scale(1.05) translateX(${currentIndex * -2}%)`;
             }
 
-            function updateCards(newIndex) {
-                if (isScrollMode || newIndex < 0 || newIndex >= totalCards) return;
-                currentIndex = newIndex;
-
+            function updateCardClasses() {
                 cards.forEach((card, idx) => {
-                    card.classList.remove('active', 'prev', 'next', 'next-far');
+                    card.classList.remove('active', 'prev', 'next', 'next-far', 'is-dragging');
+                    card.style.transform = ''; // reset manual drag
+                    
                     if (idx === currentIndex) card.classList.add('active');
                     else if (idx < currentIndex) card.classList.add('prev');
                     else if (idx === currentIndex + 1) card.classList.add('next');
                     else card.classList.add('next-far');
                 });
-
-                Array.from(progressTrack.children).forEach((dot, idx) => {
-                    dot.classList.toggle('active', idx === currentIndex);
-                });
-
-                btnPrev.disabled = currentIndex === 0;
-
-                handleStoryBeats(currentIndex);
             }
 
+            const touchZone = document.getElementById('app-container');
+
+            touchZone.addEventListener('touchstart', e => {
+                if (isScrollMode) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = true;
+                cards[currentIndex].classList.add('is-dragging');
+            }, {passive: true});
+
+            touchZone.addEventListener('touchmove', e => {
+                if (!isDragging || isScrollMode) return;
+                
+                let moveX = e.touches[0].clientX;
+                let moveY = e.touches[0].clientY;
+                let deltaX = moveX - startX;
+                let deltaY = moveY - startY;
+
+                // Priority check: Is it a vertical scroll intent or horizontal swipe?
+                if (Math.abs(deltaY) > Math.abs(deltaX) + 10) {
+                    // Vertical intent. Let browser scroll if card content is long.
+                    isDragging = false; 
+                    cards[currentIndex].classList.remove('is-dragging');
+                    cards[currentIndex].style.transform = '';
+                    return; 
+                }
+
+                // Prevent defaults strictly if horizontal intent
+                if(e.cancelable) e.preventDefault(); 
+                
+                currentX = deltaX;
+                
+                // Resistance formula
+                let resistance = 0.6;
+                let panX = currentX * resistance;
+                let rotateY = panX * 0.05; // Max 15deg
+
+                // Visual feedback on active card
+                cards[currentIndex].style.transform = `translate3d(${panX}px, 0, 0) rotateY(${rotateY}deg)`;
+                
+            }, {passive: false}); // passive false to allow preventDefault
+
+            touchZone.addEventListener('touchend', () => {
+                if (!isDragging || isScrollMode) return;
+                isDragging = false;
+                
+                cards[currentIndex].classList.remove('is-dragging');
+                cards[currentIndex].style.transform = ''; // Clear manual transform
+
+                const SWIPE_THRESHOLD = 70; // pixels
+                
+                if (currentX < -SWIPE_THRESHOLD) {
+                    // Swiped left -> Next
+                    goTo(currentIndex + 1);
+                } else if (currentX > SWIPE_THRESHOLD) {
+                    // Swiped right -> Prev
+                    goTo(currentIndex - 1);
+                }
+                
+                currentX = 0;
+            }, {passive: true});
+
+            // --- 4. STORYTELLING LOGIC ---
             function handleStoryBeats(index) {
                 switch(index) {
                     case 0: mascot.move(''); break;
                     case 1: 
                         mascot.move('pos-left'); 
-                        mascot.say("Masuk dulu, ada yang mau aku tunjukin.", 3000); 
+                        mascot.say("Yuk masuk. Malam ini spesial banget.", 3500); 
                         break;
                     case 2: 
                         mascot.move('');
-                        mascot.say("Catat tanggalnya ya. Jangan sampai lupa.", 3000);
+                        mascot.say("Catat tanggalnya. Jangan sampai lewat!", 3500);
                         break;
                     case 3: 
                         mascot.move('pos-left');
-                        mascot.say("Nah, dress code ini penting. 🖤🤎", 3000);
+                        mascot.say("Nah, dress code ini wajib yaa. 🖤🤎", 3500);
                         break;
                     case 4: 
                         mascot.move('');
-                        mascot.say("Lokasinya di sini. Tinggal tap mapnya.", 3000);
+                        mascot.say("Lokasinya di sini. Tap aja kalau mau ke map.", 3500);
                         break;
                     case 5: 
                         mascot.move('pos-center');
-                        mascot.say("Oke, semuanya udah siap. Let's party!", 0); 
+                        mascot.say("Semuanya udah siap. Ready?", 0); // Stays until clicked
                         break;
                 }
             }
 
-            btnPrev.addEventListener('click', () => updateCards(currentIndex - 1));
+            document.getElementById('btn-map').addEventListener('click', (e) => {
+                mascot.say("Gas cek lokasinya dulu 👀🚗", 3000);
+            });
 
-            let startY = 0;
-            document.addEventListener('touchstart', e => {
-                if (actPhase !== 2) return;
-                startY = e.changedTouches[0].screenY;
-            }, {passive: true});
-
-            document.addEventListener('touchend', e => {
-                if (actPhase !== 2) return;
-                let endY = e.changedTouches[0].screenY;
-                let diffY = startY - endY;
-
-                // Vertical swipe for cards
-                if (Math.abs(diffY) > 50) {
-                    if (diffY > 0) updateCards(currentIndex + 1); // swipe up -> next
-                    else updateCards(currentIndex - 1); // swipe down -> prev
-                }
-            }, {passive: true});
-
-            function createConfetti() {
+            // --- 5. THE GRAND REVEAL ---
+            function createParticles(count) {
                 const colors = ['#D4AF37', '#FFFFFF', '#8C6D1F'];
-                const container = document.getElementById('particles');
-                for(let i=0; i<60; i++) {
+                const container = document.getElementById('particles-container');
+                for(let i=0; i<count; i++) {
                     const p = document.createElement('div');
                     p.className = 'particle';
-                    p.style.width = Math.random() * 8 + 4 + 'px';
+                    p.style.width = Math.random() * 6 + 4 + 'px';
                     p.style.height = p.style.width;
                     p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                     p.style.left = '50%'; p.style.top = '50%';
@@ -901,65 +880,68 @@
                     p.animate([
                         { transform: 'translate(0,0) scale(0)', opacity: 1 },
                         { transform: `translate(${tx}px, ${ty}px) scale(1) rotate(${Math.random()*360}deg)`, opacity: 0 }
-                    ], { duration: 1000 + Math.random() * 2000, easing: 'cubic-bezier(0.25, 1, 0.3, 1)' });
+                    ], { duration: 1000 + Math.random() * 1500, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
                     
                     container.appendChild(p);
-                    setTimeout(() => p.remove(), 3000);
+                    setTimeout(() => p.remove(), 2500);
                 }
             }
 
             btnGrandReveal.addEventListener('click', () => {
-                if (isScrollMode) {
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                    return;
-                }
+                if (isScrollMode) return; // Prevent double click
 
-                // Flash & FX
+                // 1. Visual explosion
                 flash.style.opacity = '1';
-                createConfetti();
-                mascot.say("YAY! Sekarang scroll bebas ke atas/bawah! 🪩✨", 4000);
+                
+                // Cap particles for mobile performance
+                const isLowEnd = window.innerWidth <= 390;
+                createParticles(isLowEnd ? 15 : 30);
+                
+                mascot.say("WOOHOO! Scroll ke bawah buat lihat semuanya! 🪩✨", 5000);
+                mascot.move(''); // Reset position
 
+                // 2. Structural Shift after flash peaks
                 setTimeout(() => {
-                    // Structure Shift
                     isScrollMode = true;
-                    actPhase = 3;
                     
-                    // Activate final mobile scroll mode
+                    // Add magic class that converts everything
                     body.classList.add('is-scroll-mode');
                     
-                    // Clean up card inline transforms
-                    cards.forEach(c => c.style.transform = '');
-
-                    mascot.move(''); // Back to default right side
-                    btnGrandReveal.innerHTML = '&uarr; BACK TO TOP';
+                    // Clean up inline styles that interfere
+                    cards.forEach(c => {
+                        c.style.transform = '';
+                        c.style.opacity = '';
+                    });
                     
-                    // Jump to top so the continuous story starts fresh
-                    window.scrollTo(0, 0);
+                    btnGrandReveal.innerHTML = '&uarr; SCROLL TO TOP';
+                    btnGrandReveal.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+
                     flash.style.opacity = '0';
                     
+                    // Jump to top so flow makes sense
+                    window.scrollTo(0, 0);
+
+                    // Re-evaluate mascot bubble based on scroll
                     setupScrollObserver();
 
-                }, 500); 
+                }, 400); 
             });
 
+            // 6. Scroll Observer for Final Mode
             function setupScrollObserver() {
+                // When in free scroll, mascot occasionally comments based on section
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
-                        if (entry.isIntersecting) {
+                        if (entry.isIntersecting && isScrollMode) {
                             const idx = parseInt(entry.target.getAttribute('data-index'));
-                            if(idx === 1) mascot.say("Pelan-pelan bacanya...", 3000);
-                            if(idx === 3) mascot.say("Outfit-nya dipersiapkan! ✨", 3000);
-                            if(idx === 4) mascot.say("Jangan kesasar ya 😆", 3000);
+                            if(idx === 3) mascot.say("Outfit-nya dipersiapkan ya! ✨", 3000);
+                            if(idx === 4) mascot.say("Jangan kesasar lokasinya 😆", 3000);
                         }
                     });
-                }, { threshold: 0.5 });
+                }, { threshold: 0.6 }); // trigger when 60% visible
 
                 cards.forEach(card => observer.observe(card));
             }
-
-            document.getElementById('btn-map').addEventListener('click', () => {
-                mascot.say("Gas cek lokasinya dulu 👀🚗", 3000);
-            });
 
         });
     </script>
