@@ -178,6 +178,27 @@
         }
         .party-card.is-dragging { transition: none !important; }
 
+        .slide-bg-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: inherit;
+        }
+        .slide-bg-layer video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .party-card > *:not(.slide-bg-layer) {
+            position: relative;
+            z-index: 10;
+        }
+
         /* PAGE 1: Center Hero */
         .layout-center { align-items: center; justify-content: center; text-align: center; }
         .huge-title { font-size: 58px; line-height: 0.9; margin: 20px 0; letter-spacing: -1px; }
@@ -518,6 +539,55 @@
             let isScrollMode = false;
             let hasSwiped = false;
 
+            cards.forEach((card, idx) => {
+                // Clear inline style to allow dynamic BG layer to handle it
+                card.style.backgroundImage = 'none'; 
+                
+                const slideNum = idx + 1;
+                const pngPath = `background-slide${slideNum}.png`;
+                const mp4Path = `background-slide${slideNum}.mp4`;
+                const fallbackPath = `background.png`;
+
+                const bgContainer = document.createElement('div');
+                bgContainer.className = 'slide-bg-layer';
+                // Insert as the absolute bottom layer of the card
+                card.insertBefore(bgContainer, card.firstChild);
+
+                const imgTester = new Image();
+                imgTester.onload = () => {
+                    // PNG exists, use it
+                    bgContainer.style.backgroundImage = `url('${pngPath}')`;
+                    bgContainer.style.backgroundSize = 'cover';
+                    bgContainer.style.backgroundPosition = 'center';
+                };
+                imgTester.onerror = () => {
+                    // PNG not found, fallback to MP4
+                    const video = document.createElement('video');
+                    video.autoplay = true;
+                    video.muted = true;
+                    video.loop = true;
+                    video.playsInline = true;
+                    
+                    video.onerror = () => {
+                       // MP4 also not found, use global fallback PNG
+                       bgContainer.style.backgroundImage = `url('${fallbackPath}')`;
+                       bgContainer.style.backgroundSize = 'cover';
+                       bgContainer.style.backgroundPosition = 'center';
+                       video.remove();
+                    };
+
+                    video.src = mp4Path;
+                    bgContainer.appendChild(video);
+                    card.bgVideo = video; // Save reference for play/pause optimization
+                    
+                    // Pause if not the initial active slide to save CPU
+                    if (idx !== currentIndex && !isScrollMode) {
+                        video.pause();
+                    }
+                };
+                imgTester.src = pngPath;
+            });
+
             // --- VIRTUAL PHONE SCALING SYSTEM ---
             function scaleApp() {
                 const winW = window.innerWidth;
@@ -689,10 +759,19 @@
             function updateCards() {
                 cards.forEach((card, idx) => {
                     card.classList.remove('active', 'prev', 'next', 'next-far');
-                    if (idx === currentIndex) card.classList.add('active');
-                    else if (idx < currentIndex) card.classList.add('prev');
-                    else if (idx === currentIndex + 1) card.classList.add('next');
-                    else card.classList.add('next-far');
+                    if (idx === currentIndex) {
+                        card.classList.add('active');
+                        // Play video when slide becomes active
+                        if (card.bgVideo && !isScrollMode) card.bgVideo.play().catch(()=>{});
+                    }
+                    else {
+                        if (idx < currentIndex) card.classList.add('prev');
+                        else if (idx === currentIndex + 1) card.classList.add('next');
+                        else card.classList.add('next-far');
+                        
+                        // Pause video when slide is inactive to save battery/CPU
+                        if (card.bgVideo && !isScrollMode) card.bgVideo.pause();
+                    }
                 });
             }
 
@@ -772,9 +851,20 @@
             function setupScrollObserver() {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
-                        if (entry.isIntersecting && isScrollMode) {
-                            const idx = parseInt(entry.target.dataset.index);
-                            // Occasional commentary on scroll
+                        const card = entry.target;
+                        const idx = parseInt(card.dataset.index);
+                        
+                        // Video Play/Pause Management in Vertical Scroll Mode
+                        if (isScrollMode && card.bgVideo) {
+                            if (entry.isIntersecting) {
+                                card.bgVideo.play().catch(()=>{});
+                            } else {
+                                card.bgVideo.pause();
+                            }
+                        }
+
+                        // Mascot Dialogue Logic (Triggers when card is >= 60% visible)
+                        if (entry.isIntersecting && entry.intersectionRatio >= 0.6 && isScrollMode) {
                             if(idx === 0) mascot.say("Balik ke awal lagi? 👀", 2500);
                             if(idx === 3) mascot.say("Outfit-nya dipersiapkan ya! ✨", 2500);
                             if(idx === 5) mascot.say("Jangan kesasar lokasinya 😆", 2500);
@@ -782,7 +872,8 @@
                     });
                 }, { 
                     root: phoneApp, 
-                    threshold: 0.6 // Trigger when 60% of section is visible inside the phone canvas
+                    // Array threshold: 0 for video play/pause trigger, 0.6 for dialogue trigger
+                    threshold: [0, 0.6] 
                 });
                 cards.forEach(c => observer.observe(c));
             }
