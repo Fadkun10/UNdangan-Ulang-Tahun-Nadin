@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
+    <!-- Icons (Favicon & Home Screen) -->
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="shortcut icon" href="icon.png">
+
     <!-- Open Graph Data -->
     <meta property="og:title" content="BIRTHDAY NIGHT - Premium Experience">
     <meta property="og:description" content="It's my birthday, and I'd love to celebrate it with you. Yuk, dress up dan nikmatin malamnya bareng-bareng!">
@@ -140,6 +145,10 @@
             display: flex;
             flex-direction: column;
             padding: 40px 24px;
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             
             opacity: 0;
             visibility: hidden;
@@ -353,7 +362,7 @@
             <div id="card-container">
                 
                 <!-- PAGE 1: COVER -->
-                <section class="party-card layout-center active" data-index="0">
+                <section class="party-card layout-center active" data-index="0" style="background-image: url('background-slide1.png');">
                     <div class="asset-placeholder" data-label="dekorasi-01.png" data-size="512x512" style="width: 200px; height: 200px; top: -30px; right: -30px; transform: rotate(15deg); z-index: 1;"></div>
                     
                     <img src="discoball.png" alt="" style="width: 80px; margin: 0 auto; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2)); position: relative; z-index: 10;" class="interact-obj">
@@ -365,7 +374,7 @@
                 </section>
 
                 <!-- PAGE 2: PHOTO ASYMMETRIC -->
-                <section class="party-card layout-asym next" data-index="1">
+                <section class="party-card layout-asym next" data-index="1" style="background-image: url('background-slide2.png');">
                     <div class="asset-placeholder" data-label="dekorasi-03.png" data-size="512x512" style="width: 240px; height: 240px; bottom: 60px; right: -40px; border-radius: 50%; z-index: 1;"></div>
                     
                     <h2 class="serif" style="font-size: 50px; color: rgba(255,255,255,0.08); position: absolute; top: 40px; left: 20px;">CELEBRATE</h2>
@@ -385,7 +394,7 @@
                 </section>
 
                 <!-- PAGE 3: EDITORIAL DATE -->
-                <section class="party-card layout-split next-far" data-index="2">
+                <section class="party-card layout-split next-far" data-index="2" style="background-image: url('background-slide3.png');">
                     <div class="asset-placeholder" data-label="dekorasi-02.png" data-size="256x256" style="width: 160px; height: 160px; top: 40px; left: -20px; z-index: 1;"></div>
                     
                     <div style="margin-top: 150px; position: relative; z-index: 10;">
@@ -405,7 +414,7 @@
                 </section>
 
                 <!-- PAGE 4: FASHION DRESS CODE -->
-                <section class="party-card layout-fashion next-far" data-index="3">
+                <section class="party-card layout-fashion next-far" data-index="3" style="background-image: url('background-slide4.png');">
                     <div class="asset-placeholder" data-label="dekorasi-03.png" data-size="600x800" style="width: 180px; height: 240px; top: 50%; right: -20px; transform: translateY(-50%); z-index: 1;"></div>
                     
                     <div style="position: relative; z-index: 10;">
@@ -426,7 +435,7 @@
                 </section>
 
                 <!-- PAGE 5: MINIMAL GIFT -->
-                <section class="party-card layout-center next-far" style="padding-top: 120px;" data-index="4">
+                <section class="party-card layout-center next-far" style="padding-top: 120px; background-image: url('background-slide5.png');" data-index="4">
                     <div class="asset-placeholder" data-label="dekorasi-04.png" data-size="512x512" style="width: 280px; height: 280px; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; opacity: 0.5; z-index: 1;"></div>
                     
                     <div style="position: relative; z-index: 10; max-width: 280px;">
@@ -441,7 +450,7 @@
                 </section>
 
                 <!-- PAGE 6: POSTER LOCATION -->
-                <section class="party-card layout-poster next-far" data-index="5">
+                <section class="party-card layout-poster next-far" data-index="5" style="background-image: url('background-slide6.png');">
                     <div class="asset-placeholder" data-label="dekorasi-05.png" data-size="512x512" style="width: 190px; height: 190px; bottom: 80px; left: -10px; z-index: 1;"></div>
                     
                     <div style="position: relative; z-index: 10; width: 100%;">
@@ -456,7 +465,7 @@
                 </section>
 
                 <!-- PAGE 7: FINAL CELEBRATION -->
-                <section class="party-card layout-center next-far" data-index="6">
+                <section class="party-card layout-center next-far" data-index="6" style="background-image: url('background-slide7.png');">
                     <div class="asset-placeholder" data-label="dekorasi-06.png" data-size="800x500" style="width: 100%; height: 280px; top: 20px; left: 0; z-index: 1;"></div>
                     
                     <div style="position: relative; z-index: 10;">
