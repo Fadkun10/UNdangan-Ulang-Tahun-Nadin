@@ -404,6 +404,9 @@
 </head>
 <body>
 
+    <!-- BACKGROUND MUSIC -->
+    <audio id="bg-music" src="music.mp3" autoplay loop preload="auto"></audio>
+
     <div id="desktop-wrapper">
         <!-- VIRTUAL PHONE CANVAS -->
         <main id="phone-app" class="mascot-pos-right">
@@ -578,6 +581,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            // --- BACKGROUND MUSIC SYSTEM ---
+            const bgMusic = document.getElementById('bg-music');
+            
+            // Browser modern sering memblokir autoplay jika belum ada interaksi user.
+            // Fungsi ini menjamin lagu langsung berputar saat user menyentuh/klik layar pertama kali.
+            const tryPlayMusic = () => {
+                if (bgMusic.paused) {
+                    bgMusic.play().catch(() => {
+                        // Abaikan error jika masih terblokir
+                    });
+                }
+            };
+            document.body.addEventListener('pointerdown', tryPlayMusic, { once: true });
+            document.body.addEventListener('touchstart', tryPlayMusic, { once: true });
+            document.body.addEventListener('click', tryPlayMusic, { once: true });
+
             // Elements
             const appWrapper = document.getElementById('desktop-wrapper');
             const phoneApp = document.getElementById('phone-app');
