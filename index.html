@@ -364,6 +364,9 @@
         
         <!-- Elegant Watermark -->
         <div class="watermark">By Fadkun.10</div>
+
+        <!-- Audio element untuk efek sound (hanya diputar 1x saat tombol diklik) -->
+        <audio id="open-sound" src="open.mp3" preload="auto"></audio>
     </div>
 
     <script>
@@ -484,12 +487,19 @@
             const readyText = document.getElementById('ready-text');
             const appContainer = document.getElementById('app-container');
             const whiteFlash = document.getElementById('white-flash');
+            const openSound = document.getElementById('open-sound');
 
             let isTransitioning = false;
 
             function startCinematicSequence() {
                 if (isTransitioning) return;
                 isTransitioning = true;
+
+                // 0. Memutar audio open.mp3 (1x)
+                if (openSound) {
+                    openSound.currentTime = 0;
+                    openSound.play().catch(e => console.log("Audio play diizinkan oleh browser setelah klik:", e));
+                }
 
                 // 1. CLICK: Fade out content immediately
                 welcomeScene.classList.add('hidden');
