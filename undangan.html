@@ -354,10 +354,18 @@
             transition: opacity 0.8s;
         }
 
+        /* EFEK FADE DARI PUTIH SAAT AWAL BUKA WEB */
+        #intro-white-fade {
+            position: fixed; inset: 0; background: #ffffff; z-index: 99999;
+            pointer-events: none;
+            animation: fadeFromWhite 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
         @keyframes floatMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes swipeGesture { 0%, 100% { transform: translateX(0); opacity: 0.3;} 50% { transform: translateX(15px); opacity: 1;} }
         @keyframes lightPulse { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
         @keyframes spinObj { to { transform: rotate(360deg); } }
+        @keyframes fadeFromWhite { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
         
         /* INSTAGRAM WATERMARK PATCH */
         .ig-watermark {
@@ -403,6 +411,9 @@
     </style>
 </head>
 <body>
+
+    <!-- EFEK LAYAR PUTIH AWAL -->
+    <div id="intro-white-fade"></div>
 
     <!-- BACKGROUND MUSIC -->
     <audio id="bg-music" src="music.mp3" autoplay loop preload="auto"></audio>
@@ -508,7 +519,7 @@
                     <div style="position: relative; z-index: 10; max-width: 300px; width: 90%; background: rgba(15, 15, 18, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.4); padding: 30px 24px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.1);">
                         <img src="sparkles.png" alt="" style="width: 45px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 12px rgba(212,175,55,0.6));" class="interact-obj">
                         <p style="font-size: 16px; color: #FFFFFF; margin-bottom: 16px; font-weight: 600; line-height: 1.5; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-                            Hadiah / kadonya, kami hanya menerima melalui <span class="gold-text" style="font-weight: 800; font-size: 17px;">amplop atau QR</span> yaa. ✨
+                            Hadiahnya, kami hanya menerima melalui <span class="gold-text" style="font-weight: 800; font-size: 17px; text-shadow: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">amplop atau QR</span> yaa. ✨
                         </p>
                         <div style="width: 40px; height: 1px; background: rgba(212,175,55,0.3); margin: 0 auto 16px auto;"></div>
                         <p style="font-size: 13.5px; color: #E0E0E0; line-height: 1.6; font-weight: 400;">
@@ -544,7 +555,7 @@
                         </p>
                         
                         <p style="font-size: 13px; color: rgba(255, 255, 255, 0.85); line-height: 1.6; margin-bottom: 40px; font-weight: 400;">
-                            Bagi yang belum bisa hadir, kabari minimal <span class="gold-text" style="font-weight: 800; font-size: 20px; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">H-3</span> sebelum acara ya...<br><br>
+                            Bagi yang belum bisa hadir, kabari minimal <span class="gold-text" style="font-weight: 800; font-size: 20px; letter-spacing: 1px; text-shadow: none; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));">H-3</span> sebelum acara ya...<br><br>
                             <span style="font-weight: 600; font-size: 16px; color: #fff; font-style: italic;">See you there!</span>
                         </p>
                         
