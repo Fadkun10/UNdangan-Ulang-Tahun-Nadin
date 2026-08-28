@@ -748,10 +748,15 @@
                     mascot.setPosition('right');
                     mascot.say("Hai! Aku yang bakal nemenin kamu malam ini.", 3500);
                     
+                    // Tampilkan panduan visual (geser) langsung sejak awal masuk
+                    if(!hasSwiped && !isScrollMode) {
+                        tutorialUI.classList.add('visible');
+                    }
+                    
+                    // Maskot memberikan pengingat lewat teks jika setelah 4 detik belum digeser
                     setTimeout(() => {
                         if(!hasSwiped && !isScrollMode) {
                             mascot.say("Geser ke kiri atau kanan buat lanjut ya.", 5000);
-                            tutorialUI.classList.add('visible');
                         }
                     }, 4000);
                 }, 800);
