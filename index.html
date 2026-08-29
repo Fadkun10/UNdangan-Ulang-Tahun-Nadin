@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Invitation - Cinematic Opening</title>
     
+    <!-- Open Graph / Link Preview Meta Tags -->
     <meta property="og:url" content="https://undangan-12-09-2026.vercel.app/">
     <meta property="og:title" content="Birthday Night">
     <meta property="og:description" content="Kamu diundang untuk hadir di acara ulang tahunku.">
+    <!-- Menggunakan Absolute URL agar muncul di WhatsApp -->
     <meta property="og:image" content="https://undangan-12-09-2026.vercel.app/poster.png">
     <meta property="og:type" content="website">
     
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Birthday Night">
     <meta name="twitter:description" content="Kamu diundang untuk hadir di acara ulang tahunku.">
     <meta name="twitter:image" content="https://undangan-12-09-2026.vercel.app/poster.png">
 
+    <!-- Website Icons -->
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 
@@ -102,7 +106,7 @@
             top: 0;
             height: 100%;
             width: 50%;
-            /* Warna dasar malam dan efek bintang berlapis */
+            /* Warna dasar malam (Deep Navy ke Black) */
             background-color: #03050a;
             background-image: 
                 radial-gradient(1px 1px at 25px 30px, #ffffff, transparent),
@@ -136,8 +140,8 @@
             top: 0;
             bottom: 0;
             width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5), transparent);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.6), transparent);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
             z-index: 2;
         }
 
@@ -246,7 +250,6 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 0 0 rgba(255, 255, 255, 0.2);
-            /* Touch target minimum 44px (padding ensures this) */
         }
 
         .cta-button::before {
@@ -317,12 +320,57 @@
             position: absolute;
             bottom: calc(var(--safe-bottom) + 30px);
             right: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 15;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .watermark.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+        }
+
+        /* Hover effect untuk watermark */
+        .watermark:hover .watermark-logo {
+            opacity: 0.8;
+        }
+        .watermark:hover .watermark-text {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .watermark-text {
             font-family: 'Montserrat', sans-serif;
             font-size: 10px;
             color: rgba(255, 255, 255, 0.3);
-            z-index: 15;
             letter-spacing: 1px;
-            pointer-events: none;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .watermark-logo {
+            width: 58px; /* Sekitar 3/4 dari lebar teks "By Fadkun.10" */
+            aspect-ratio: 1 / 1; /* Memaksa rasio 1:1 berbentuk persegi */
+            object-fit: contain; /* Menjaga agar gambar utuh dan tidak terpotong */
+            border: none;
+            background: transparent;
+            opacity: 0.5; /* Dibuat sedikit transparan agar elegan dan menyatu dengan teks */
+            transition: opacity 0.3s ease;
+            animation: watermarkBounce 5s infinite; /* Berjalan berulang setiap 5 detik */
+        }
+
+        /* Keyframes untuk efek melompat (mantul) beberapa detik sekali */
+        @keyframes watermarkBounce {
+            0%, 75%, 100% { transform: translateY(0); }
+            80% { transform: translateY(-8px); }
+            85% { transform: translateY(0); }
+            90% { transform: translateY(-4px); }
+            95% { transform: translateY(0); }
         }
 
         @keyframes fadeUp {
@@ -351,8 +399,8 @@
 
         <!-- Scene 1: Welcome Content -->
         <div class="scene-content" id="welcome-scene">
-            <h1>WELCOME</h1>
-            <p class="subtitle">You are invited to<br>attend my birthday party.</p>
+            <h1>SELAMAT DATANG</h1>
+            <p class="subtitle">Kamu diundang untuk hadir<br>di acara ulang tahunku.</p>
             <div class="cta-wrapper">
                 <button class="cta-button" id="start-btn" aria-label="Mulai masuk ke undangan">KLIK UNTUK MELANJUTKAN</button>
             </div>
@@ -363,12 +411,13 @@
         <div class="white-flash" id="white-flash"></div>
         
         <!-- Elegant Watermark -->
-        <div class="watermark">By Fadkun.10</div>
+        <a href="https://www.instagram.com/fadkun.10/" target="_blank" rel="noopener noreferrer" class="watermark">
+            <img src="fadkun10.png" alt="Fadkun.10 Logo" class="watermark-logo">
+            <span class="watermark-text">By Fadkun.10</span>
+        </a>
 
         <!-- Audio element untuk efek sound (hanya diputar 1x saat tombol diklik) -->
         <audio id="open-sound" src="open.mp3" preload="auto"></audio>
-        <!-- Audio element untuk BGM (Looping) -->
-        <audio id="bg-music" src="music.mp3" loop preload="auto"></audio>
     </div>
 
     <script>
@@ -490,17 +539,9 @@
             const appContainer = document.getElementById('app-container');
             const whiteFlash = document.getElementById('white-flash');
             const openSound = document.getElementById('open-sound');
-            const bgMusic = document.getElementById('bg-music');
+            const watermark = document.querySelector('.watermark');
 
             let isTransitioning = false;
-
-            // Event listener: Ketika open.mp3 selesai diputar, langsung putar music.mp3
-            if (openSound && bgMusic) {
-                openSound.addEventListener('ended', () => {
-                    bgMusic.currentTime = 0;
-                    bgMusic.play().catch(e => console.log("BGM play error:", e));
-                });
-            }
 
             function startCinematicSequence() {
                 if (isTransitioning) return;
@@ -523,6 +564,8 @@
                 setTimeout(() => {
                     readyText.classList.remove('show');
                     readyText.classList.add('fade');
+                    // Watermark memudar bersamaan dengan teks "READY?"
+                    if (watermark) watermark.classList.add('hidden');
                 }, 1300);
 
                 // 3. DOOR OPENS
