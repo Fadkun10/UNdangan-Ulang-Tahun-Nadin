@@ -2,605 +2,1009 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Invitation - Cinematic Opening</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Open Graph / Link Preview Meta Tags -->
-    <meta property="og:url" content="https://undangan-12-09-2026.vercel.app/">
-    <meta property="og:title" content="Birthday Night">
-    <meta property="og:description" content="Kamu diundang untuk hadir di acara ulang tahunku.">
-    <!-- Menggunakan Absolute URL agar muncul di WhatsApp -->
-    <meta property="og:image" content="https://undangan-12-09-2026.vercel.app/poster.png">
-    <meta property="og:type" content="website">
-    
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Birthday Night">
-    <meta name="twitter:description" content="Kamu diundang untuk hadir di acara ulang tahunku.">
-    <meta name="twitter:image" content="https://undangan-12-09-2026.vercel.app/poster.png">
-
-    <!-- Website Icons -->
+    <!-- Icons (Favicon & Home Screen) -->
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
+    <link rel="shortcut icon" href="icon.png">
 
+    <!-- Open Graph Data -->
+    <meta property="og:title" content="BIRTHDAY NIGHT - Premium Experience">
+    <meta property="og:description" content="It's my birthday, and I'd love to celebrate it with you. Yuk, dress up dan nikmatin malamnya bareng-bareng!">
+    <meta property="og:image" content="poster.png">
+    <meta property="og:type" content="website">
+
+    <title>Birthday Night</title>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (for utility classes, combined with custom CSS for strict architecture) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         :root {
-            --primary-text: #ffffff;
-            --secondary-text: rgba(255, 255, 255, 0.7);
-            --bg-dark: #050508;
-            --safe-bottom: env(safe-area-inset-bottom, 20px);
+            --gold-light: #F9E596;
+            --gold-primary: #D4AF37;
+            --gold-dark: #8C6D1F;
+            --bg-deep: #050508;
+            --text-main: #FFFFFF;
+            --text-dim: #A0A0A5;
+            
+            /* The fixed mobile canvas coordinate system */
+            --app-width: 390px;
+            --app-height: 844px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* HIDE SCROLLBAR GLOBALLY BUT KEEP SCROLLING */
+        html, body, * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
             -webkit-tap-highlight-color: transparent;
+        }
+        *::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
         }
 
         body {
-            background-color: #000;
-            color: var(--primary-text);
+            margin: 0; padding: 0;
+            background-color: #000; /* Desktop outer background */
+            color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden; /* Mencegah scrolling */
+            overflow: hidden; /* Prevent desktop window scroll */
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            height: 100dvh;
+            justify-content: center;
+            height: 100svh;
             width: 100vw;
+            touch-action: none; /* Handled by JS initially */
         }
 
-        /* 
-         * MOBILE-FIRST CANVAS LAYOUT 
-         * Desktop akan melihat tampilan virtual phone di tengah layar.
-         * Mobile akan mengisi seluruh layar.
-         */
-        #app-container {
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+
+        /* THE VIRTUAL PHONE CANVAS */
+        #desktop-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-dark);
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        @media (min-width: 768px) {
-            #app-container {
-                width: 390px;
-                height: 844px;
-                max-height: 95vh;
-                border-radius: 40px;
-                border: 8px solid #1a1a1a;
-                box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05) inset;
-            }
-        }
-
-        #starfield {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .fog-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 3;
-            pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(5, 5, 8, 0.8) 100%);
-        }
-
-        .portal-door {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 50%;
-            /* Warna dasar malam (Deep Navy ke Black) */
-            background-color: #03050a;
-            background-image: 
-                radial-gradient(1px 1px at 25px 30px, #ffffff, transparent),
-                radial-gradient(1px 1px at 75px 80px, rgba(255, 255, 255, 0.8), transparent),
-                radial-gradient(1.5px 1.5px at 130px 40px, #ffffff, transparent),
-                radial-gradient(2px 2px at 190px 120px, rgba(255, 255, 255, 0.5), transparent),
-                linear-gradient(to bottom, #02040b 0%, #0a1122 50%, #02040b 100%);
-            background-size: 200px 200px, 250px 250px, 300px 300px, 350px 350px, 100% 100%;
-            z-index: 5;
-            transition: transform 2s cubic-bezier(0.76, 0, 0.24, 1);
             display: flex;
             align-items: center;
-        }
-
-        /* Menambahkan efek pendaran tipis (nebula) kebiruan di pintu */
-        .portal-door::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(30, 50, 90, 0.3) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        /* Garis cahaya pembelah di tengah pintu */
-        .portal-door::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.6), transparent);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-            z-index: 2;
-        }
-
-        /* Layer khusus untuk bintang yang berkedip di pintu */
-        .twinkling-stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(1.5px 1.5px at 40px 80px, rgba(255, 255, 255, 1), transparent),
-                radial-gradient(2px 2px at 160px 220px, rgba(255, 255, 255, 0.8), transparent),
-                radial-gradient(1px 1px at 280px 120px, rgba(255, 255, 255, 1), transparent),
-                radial-gradient(1.5px 1.5px at 100px 350px, rgba(255, 255, 255, 0.9), transparent);
-            background-size: 320px 320px, 400px 400px, 250px 250px, 350px 350px;
-            z-index: 1;
-            pointer-events: none;
-            animation: doorTwinkle 2s infinite alternate ease-in-out;
-        }
-
-        @keyframes doorTwinkle {
-            0% { opacity: 0.1; }
-            100% { opacity: 1; }
-        }
-
-        #door-left {
-            left: 0;
-            transform-origin: left;
-        }
-        #door-left::after { right: 0; }
-
-        #door-right {
-            right: 0;
-            transform-origin: right;
-        }
-        #door-right::after { left: 0; }
-
-        .doors-open #door-left { transform: translateX(-100%); }
-        .doors-open #door-right { transform: translateX(100%); }
-
-        .scene-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 30px;
-            transition: opacity 0.8s ease, transform 1s ease;
+            perspective: 1200px;
         }
 
-        .scene-content.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(1.05);
-        }
-
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.2rem;
-            font-weight: 400;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            opacity: 0;
-            animation: fadeUp 1.5s ease 0.5s forwards;
-            transform: translateY(20px);
-        }
-
-        p.subtitle {
-            font-size: 0.95rem;
-            color: var(--secondary-text);
-            line-height: 1.6;
-            margin-bottom: 60px;
-            opacity: 0;
-            animation: fadeUp 1.5s ease 1s forwards;
-            transform: translateY(20px);
-        }
-
-        .cta-wrapper {
-            opacity: 0;
-            animation: fadeUp 1.5s ease 1.5s forwards;
-            transform: translateY(20px);
-        }
-
-        .cta-button {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: var(--primary-text);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 2px;
-            padding: 16px 36px;
-            border-radius: 50px;
-            cursor: pointer;
+        #phone-app {
             position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 0 0 rgba(255, 255, 255, 0.2);
+            width: var(--app-width);
+            height: var(--app-height);
+            background-color: var(--bg-deep);
+            overflow: hidden; /* Cards are contained */
+            transform-origin: center center;
+            /* Subtle desktop presentation */
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.05), 0 30px 60px rgba(0,0,0,0.8);
+            border-radius: 0px; /* Kept square for true fullscreen feel on mobile, can be rounded via JS if on desktop if desired, but 0 is safer for edge-to-edge scaling */
         }
 
-        .cta-button::before {
-            content: '';
+        .app-bg {
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: skewX(-20deg);
-            transition: all 0.5s ease;
+            inset: -5%;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+            z-index: 0;
+            transition: transform 0.8s ease;
         }
-
-        @media (hover: hover) {
-            .cta-button:hover {
-                background: rgba(255, 255, 255, 0.08);
-                border-color: rgba(255, 255, 255, 0.3);
-                box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05);
-                transform: translateY(-2px);
-            }
-            .cta-button:hover::before {
-                left: 150%;
-                transition: all 0.7s ease;
-            }
-        }
-
-        .cta-button:active {
-            transform: scale(0.95) translateY(0);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .ready-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            letter-spacing: 6px;
-            color: #fff;
-            z-index: 11;
-            opacity: 0;
-            transition: opacity 0.5s ease;
+        
+        .light-streak {
+            position: absolute; width: 600px; height: 100px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+            filter: blur(30px); z-index: 1; transform: rotate(-35deg) translate(-100px, -100px);
             pointer-events: none;
+            animation: lightPulse 8s infinite alternate;
         }
 
-        .ready-text.show { opacity: 1; }
-        .ready-text.fade { opacity: 0; }
-
-        .white-flash {
+        /* PLACEHOLDER SYSTEM FOR DEVELOPMENT */
+        .asset-placeholder {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
-            z-index: 20;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1.2s cubic-bezier(0.5, 0, 0.1, 1);
+            border: 2px dashed rgba(212, 175, 55, 0.6);
+            background: rgba(212, 175, 55, 0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 12px; pointer-events: none;
+            overflow: hidden; z-index: 2;
+        }
+        .asset-placeholder::before {
+            content: attr(data-label);
+            font-family: monospace; font-size: 11px; color: var(--gold-light);
+            font-weight: bold; text-align: center; padding: 4px;
+        }
+        .asset-placeholder::after {
+            content: attr(data-size);
+            font-family: monospace; font-size: 9px; color: var(--gold-primary);
+            text-align: center; opacity: 0.8;
+        }
+        
+        /* ASSET LOADING BUG FIX: Hilangkan kotak & teks jika gambar berhasil dimuat */
+        .asset-placeholder.is-loaded {
+            border: none !important;
+            background-color: transparent !important;
+            background-size: contain !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+        .asset-placeholder.is-loaded::before,
+        .asset-placeholder.is-loaded::after {
+            display: none !important;
         }
 
-        .white-flash.active { opacity: 1; }
-
-        .watermark {
+        #card-container {
             position: absolute;
-            bottom: calc(var(--safe-bottom) + 30px);
-            right: 16px;
+            inset: 0;
+            z-index: 10;
+            transform-style: preserve-3d;
+            perspective: 1200px;
+        }
+
+        .party-card {
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--app-width);
+            height: var(--app-height);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            z-index: 15;
-            cursor: pointer;
-            text-decoration: none;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .watermark.hidden {
+            padding: 40px 24px;
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
-            transform: translateY(10px);
+            will-change: transform, opacity;
+            
+            transform: translateZ(-300px) translateY(50px);
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.35, 1), opacity 0.5s, visibility 0.5s;
         }
 
-        /* Hover effect untuk watermark */
-        .watermark:hover .watermark-logo {
-            opacity: 0.8;
+        /* Card States for Stack Mode */
+        .party-card.active {
+            opacity: 1; visibility: visible; pointer-events: auto;
+            transform: translateZ(0) translateY(0); z-index: 20;
         }
-        .watermark:hover .watermark-text {
-            color: rgba(255, 255, 255, 0.6);
+        .party-card.prev {
+            opacity: 0; visibility: hidden;
+            transform: translateZ(100px) translateX(-200px) rotateY(-15deg); z-index: 25;
+        }
+        .party-card.next {
+            opacity: 0.6; visibility: visible;
+            transform: translateZ(-100px) translateY(20px) scale(0.95); z-index: 10;
+        }
+        .party-card.next-far {
+            opacity: 0; visibility: hidden;
+            transform: translateZ(-250px) translateY(60px); z-index: 5;
+        }
+        .party-card.is-dragging { transition: none !important; }
+
+        .slide-bg-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: inherit;
+        }
+        .slide-bg-layer video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .party-card > *:not(.slide-bg-layer) {
+            position: relative;
+            z-index: 10;
         }
 
-        .watermark-text {
-            font-family: 'Montserrat', sans-serif;
+        /* PAGE 1: Center Hero */
+        .layout-center { align-items: center; justify-content: center; text-align: center; }
+        .huge-title { font-size: 58px; line-height: 0.9; margin: 20px 0; letter-spacing: -1px; }
+        .gold-text {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        /* PAGE 2: Asymmetric */
+        .layout-asym { justify-content: center; align-items: flex-start; }
+        .hero-photo {
+            position: absolute; right: 20px; top: 120px;
+            width: 260px; height: 325px; /* 4:5 ratio */
+            border-radius: 16px; overflow: hidden;
+            box-shadow: -15px 20px 40px rgba(0,0,0,0.8); z-index: 5;
+        }
+        .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .text-overlap {
+            position: relative; z-index: 10; margin-top: 280px; width: 280px;
+            background: rgba(10,10,12,0.65); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 24px; border-radius: 16px; border-left: 3px solid var(--gold-primary);
+        }
+
+        /* PAGE 3: Editorial Split */
+        .layout-split { justify-content: center; }
+        .date-huge { font-size: 140px; line-height: 0.8; opacity: 0.9; margin-left: -10px; }
+
+        /* PAGE 4: Diagonal Fashion */
+        .layout-fashion { justify-content: center; }
+        .dress-row { display: flex; gap: 15px; margin-top: 30px; height: 180px; }
+        .dress-box {
+            flex: 1; border-radius: 20px; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden;
+        }
+        .dress-box img { width: 45px; margin-bottom: 12px; z-index: 2; }
+        .dress-box span { font-weight: 700; font-size: 13px; letter-spacing: 2px; z-index: 2;}
+
+        /* PAGE 6: Poster Location */
+        .layout-poster { justify-content: flex-end; padding-bottom: 120px; }
+        .venue-title { font-size: 52px; line-height: 0.95; margin-bottom: 20px; }
+
+        #overlay-layer {
+            position: absolute; inset: 0; z-index: 100;
+            pointer-events: none; /* Let clicks pass through to cards by default */
+        }
+
+        #mascot-host {
+            position: absolute;
+            bottom: max(30px, env(safe-area-inset-bottom));
+            width: 85px; height: auto;
+            pointer-events: auto; /* Clickable */
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));
+            animation: floatMascot 4s infinite ease-in-out;
+            cursor: pointer; transform-origin: bottom center;
+            transition: left 0.6s cubic-bezier(0.25, 1, 0.35, 1), right 0.6s cubic-bezier(0.25, 1, 0.35, 1), transform 0.3s;
+        }
+        #mascot-host:active { transform: scale(0.9) translateY(5px) !important; }
+
+        /* Adaptive Speech Bubble */
+        #speech-bubble {
+            position: absolute;
+            background: rgba(15, 15, 18, 0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 14px 18px; 
+            color: var(--text-main);
+            font-size: 13px; font-weight: 500; line-height: 1.5;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            pointer-events: auto;
+            
+            /* Responsive constraints within the 390px canvas */
+            width: max-content;
+            max-width: 210px;
+            overflow-wrap: break-word; word-break: normal;
+            
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #speech-bubble.visible { opacity: 1; visibility: visible; }
+        
+        /* Mascot positioning states */
+        .mascot-pos-right #mascot-host { right: 20px; left: auto; }
+        .mascot-pos-left #mascot-host { left: 20px; right: auto; }
+        .mascot-hidden #mascot-host { transform: translateY(150px) scale(0.8); opacity: 0; pointer-events: none;}
+
+        /* Bubble positioning based on Mascot state */
+        .mascot-pos-right #speech-bubble {
+            right: 15px; bottom: 100%; margin-bottom: 100px; /* relative to app bottom */
+            border-radius: 20px 20px 0 20px; transform-origin: bottom right;
+            transform: translateY(10px) scale(0.9);
+        }
+        .mascot-pos-left #speech-bubble {
+            left: 15px; bottom: 100%; margin-bottom: 100px;
+            border-radius: 20px 20px 20px 0; transform-origin: bottom left;
+            transform: translateY(10px) scale(0.9);
+        }
+        .mascot-pos-right #speech-bubble.visible { transform: translateY(0) scale(1); }
+        .mascot-pos-left #speech-bubble.visible { transform: translateY(0) scale(1); }
+
+
+        /* THE GRAND REVEAL & FINAL NATIVE SCROLL MODE */
+        #phone-app.is-scroll-mode {
+            overflow-y: auto !important; /* Enable NATIVE vertical scroll */
+            overflow-x: hidden;
+            touch-action: pan-y; /* Allow browser handling of vertical touch */
+        }
+        
+        #phone-app.is-scroll-mode #card-container {
+            position: relative; /* Break out of absolute stacking */
+            transform: none !important;
+            padding-bottom: max(280px, calc(env(safe-area-inset-bottom) + 200px)); /* Safe bottom space */
+        }
+
+        #phone-app.is-scroll-mode .party-card {
+            position: relative; /* Flow normally */
+            transform: none !important;
+            opacity: 1 !important; visibility: visible !important;
+            pointer-events: auto !important;
+            min-height: var(--app-height); /* Ensure each section is at least one screen high */
+            height: auto;
+            border-bottom: none; /* Hilangkan garis pemisah antar slide */
+        }
+
+        .btn-luxe {
+            position: relative;
+            background: rgba(25, 25, 30, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--text-main);
+            padding: 16px 24px; border-radius: 16px;
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6); transition: all 0.3s ease; width: 100%;
+        }
+        .btn-luxe:active { transform: scale(0.95); background: rgba(212, 175, 55, 0.2); border-color: var(--gold-primary); }
+
+        #tutorial-ui {
+            position: absolute; bottom: 130px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 15px;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s; z-index: 90;
+        }
+        #tutorial-ui.visible { opacity: 1; }
+        .tut-anim { animation: swipeGesture 2s infinite ease-in-out; color: var(--gold-light); font-size: 20px;}
+        
+        #flash-bang {
+            position: absolute; inset: 0; background: #fff; z-index: 999;
+            opacity: 0; pointer-events: none; transition: opacity 0.8s ease-out;
+        }
+        #loader {
+            position: absolute; inset: 0; background: var(--bg-deep); z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s;
+        }
+
+        /* EFEK FADE DARI PUTIH SAAT AWAL BUKA WEB */
+        #intro-white-fade {
+            position: fixed; inset: 0; background: #ffffff; z-index: 99999;
+            pointer-events: none;
+            animation: fadeFromWhite 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes floatMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes swipeGesture { 0%, 100% { transform: translateX(0); opacity: 0.3;} 50% { transform: translateX(15px); opacity: 1;} }
+        @keyframes lightPulse { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
+        @keyframes spinObj { to { transform: rotate(360deg); } }
+        @keyframes fadeFromWhite { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+        
+        /* INSTAGRAM WATERMARK PATCH */
+        .ig-watermark {
+            color: rgba(255, 255, 255, 0.5);
             font-size: 10px;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 1px;
-            white-space: nowrap;
-            transition: color 0.3s ease;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            z-index: 80;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .ig-watermark:hover {
+            color: var(--gold-light);
+            opacity: 1;
+        }
+        .watermark-fixed {
+            position: absolute;
+            bottom: max(26px, calc(env(safe-area-inset-bottom) + 26px));
+            right: 18px;
+        }
+        #phone-app.is-scroll-mode .watermark-fixed {
+            display: none !important;
+        }
+        .watermark-flow-container {
+            display: none;
+        }
+        #phone-app.is-scroll-mode .watermark-flow-container {
+            display: block;
+            position: relative;
+            width: 100%;
+            text-align: center;
+            padding-top: 80px; /* Jarak dari konten terakhir */
+            padding-bottom: 20px;
+            z-index: 20;
         }
 
-        .watermark-logo {
-            width: 58px; /* Sekitar 3/4 dari lebar teks "By Fadkun.10" */
-            aspect-ratio: 1 / 1; /* Memaksa rasio 1:1 berbentuk persegi */
-            object-fit: contain; /* Menjaga agar gambar utuh dan tidak terpotong */
-            border: none;
-            background: transparent;
-            opacity: 0.5; /* Dibuat sedikit transparan agar elegan dan menyatu dengan teks */
-            transition: opacity 0.3s ease;
-            animation: watermarkBounce 5s infinite; /* Berjalan berulang setiap 5 detik */
-        }
-
-        /* Keyframes untuk efek melompat (mantul) beberapa detik sekali */
-        @keyframes watermarkBounce {
-            0%, 75%, 100% { transform: translateY(0); }
-            80% { transform: translateY(-8px); }
-            85% { transform: translateY(0); }
-            90% { transform: translateY(-4px); }
-            95% { transform: translateY(0); }
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        
-        <!-- Background Layer -->
-        <canvas id="starfield"></canvas>
-        <div class="fog-overlay"></div>
+    <!-- EFEK LAYAR PUTIH AWAL -->
+    <div id="intro-white-fade"></div>
 
-        <!-- Portal Doors (Initial closed state) -->
-        <div class="portal-door" id="door-left">
-            <div class="twinkling-stars" style="animation-delay: 0s;"></div>
-        </div>
-        <div class="portal-door" id="door-right">
-            <div class="twinkling-stars" style="animation-delay: -1.5s;"></div>
-        </div>
+    <!-- BACKGROUND MUSIC -->
+    <audio id="bg-music" src="music.mp3" autoplay loop preload="auto"></audio>
 
-        <!-- Scene 1: Welcome Content -->
-        <div class="scene-content" id="welcome-scene">
-            <h1>SELAMAT DATANG</h1>
-            <p class="subtitle">Kamu diundang untuk hadir<br>di acara ulang tahunku.</p>
-            <div class="cta-wrapper">
-                <button class="cta-button" id="start-btn" aria-label="Mulai masuk ke undangan">KLIK UNTUK MELANJUTKAN</button>
+    <div id="desktop-wrapper">
+        <!-- VIRTUAL PHONE CANVAS -->
+        <main id="phone-app" class="mascot-pos-right">
+            
+            <!-- LOADING -->
+            <div id="loader">
+                <div style="width: 40px; height: 40px; border: 2px solid rgba(212,175,55,0.2); border-top-color: var(--gold-primary); border-radius: 50%; animation: spinObj 1s linear infinite;"></div>
             </div>
-        </div>
+            
+            <div class="app-bg" id="main-bg"></div>
+            <div class="light-streak"></div>
+            <div id="flash-bang"></div>
 
-        <!-- Transition Elements -->
-        <div class="ready-text" id="ready-text">READY?</div>
-        <div class="white-flash" id="white-flash"></div>
-        
-        <!-- Elegant Watermark -->
-        <a href="https://www.instagram.com/fadkun.10/" target="_blank" rel="noopener noreferrer" class="watermark">
-            <img src="fadkun10.png" alt="Fadkun.10 Logo" class="watermark-logo">
-            <span class="watermark-text">By Fadkun.10</span>
-        </a>
+            <!-- WATERMARK: FIXED (CARD MODE) -->
+            <a href="https://www.instagram.com/fadkun.10/" target="_blank" rel="noopener noreferrer" class="ig-watermark watermark-fixed">
+                By Fadkun.10
+            </a>
 
-        <!-- Audio element untuk efek sound (hanya diputar 1x saat tombol diklik) -->
-        <audio id="open-sound" src="open.mp3" preload="auto"></audio>
+            <!-- CARDS CONTAINER -->
+            <div id="card-container">
+                
+                <!-- PAGE 1: COVER -->
+                <section class="party-card layout-center active" data-index="0" style="background-image: url('background-slide1.png');">
+                    <div class="asset-placeholder" data-label="dekorasi-01.png" data-size="512x512" style="width: 200px; height: 200px; top: -30px; right: -30px; transform: rotate(15deg); z-index: 1;"></div>
+                    
+                    <img src="discoball.png" alt="" style="width: 80px; margin: 0 auto; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2)); position: relative; z-index: 10;" class="interact-obj">
+                    
+                    <h1 class="serif gold-text huge-title relative z-10">BIRTHDAY<br>NIGHT</h1>
+                    <p style="color: var(--text-dim); font-size: 12px; letter-spacing: 4px; text-transform: uppercase; position: relative; z-index: 10;">Premium Experience</p>
+                    
+                    <div class="asset-placeholder" data-label="dekorasi-02.png" data-size="512x512" style="width: 250px; height: 250px; bottom: 50px; left: -50px; opacity: 0.6; z-index: 1;"></div>
+                </section>
+
+                <!-- PAGE 2: PHOTO ASYMMETRIC -->
+                <section class="party-card layout-asym next" data-index="1" style="background-image: url('background-slide2.png');">
+                    <div class="asset-placeholder" data-label="dekorasi-03.png" data-size="512x512" style="width: 240px; height: 240px; bottom: 60px; right: -40px; border-radius: 50%; z-index: 1;"></div>
+                    
+                    <h2 class="serif" style="font-size: 50px; color: rgba(255,255,255,0.08); position: absolute; top: 40px; left: 20px;">CELEBRATE</h2>
+                    
+                    <div class="hero-photo">
+                        <!-- Menghapus atribut onerror yang menyembunyikan gambar secara paksa -->
+                        <img src="foto-orang.png" alt="Birthday Person">
+                    </div>
+                    
+                    <div class="text-overlap">
+                        <p style="font-size: 16px; line-height: 1.6; font-weight: 300;">
+                            It’s my birthday, and I’d love to celebrate it with you.
+                        </p>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 12px;">
+                            Yuk, dress up dan nikmatin malamnya bareng-bareng!
+                        </p>
+                    </div>
+                </section>
+
+                <!-- PAGE 3: EDITORIAL DATE -->
+                <section class="party-card layout-split next-far" data-index="2" style="background-image: url('background-slide3.png');">
+                    <div class="asset-placeholder" data-label="dekorasi-02.png" data-size="256x256" style="width: 160px; height: 160px; top: 40px; left: -20px; z-index: 1;"></div>
+                    
+                    <div style="margin-top: 150px; position: relative; z-index: 10;">
+                        <p style="font-size: 12px; letter-spacing: 3px; color: var(--gold-primary);">MARK THE DATE</p>
+                        <div class="serif date-huge">12</div>
+                        
+                        <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px;">
+                            <div style="width: 60px; height: 1px; background: var(--gold-primary);"></div>
+                            <div>
+                                <h3 class="serif gold-text" style="font-size: 26px; margin-bottom: 5px;">September 2026</h3>
+                                <p style="font-size: 14px; color: var(--text-dim);">17.00 – 20.00 WIB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="asset-placeholder" data-label="dekorasi-wide.png" data-size="800x500" style="width: 120%; height: 200px; top: 400px; left: -10%; z-index: 1;"></div>
+                </section>
+
+                <!-- PAGE 4: FASHION DRESS CODE -->
+                <section class="party-card layout-fashion next-far" data-index="3" style="background-image: url('background-slide4.png');">
+                    <div class="asset-placeholder" data-label="dekorasi-03.png" data-size="600x800" style="width: 180px; height: 240px; top: 50%; right: -20px; transform: translateY(-50%); z-index: 1;"></div>
+                    
+                    <div style="position: relative; z-index: 10; margin-top: -50px;">
+                        <h2 class="serif gold-text" style="font-size: 44px; line-height: 1;">DRESS<br>CODE</h2>
+                        <p style="font-size: 14px; color: var(--text-dim); margin-top: 15px;">Bring your best club look.</p>
+                        
+                        <div class="dress-row">
+                            <div class="dress-box interact-obj" style="background: #0a0a0a; color: #fff;">
+                                <img src="heart-black.png" alt="">
+                                <span>ATASAN<br>HITAM</span>
+                            </div>
+                            <div class="dress-box interact-obj" style="background: linear-gradient(135deg, #F3E5D8 0%, #D8BE7D 100%); color: #2c241b;">
+                                <img src="heart-cream.png" alt="">
+                                <span style="line-height: 1.3;">BAWAHAN<br><span style="font-size: 11px; font-weight: 800; letter-spacing: 1px;">CREAM / GOLD</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PAGE 5: MINIMAL GIFT -->
+                <section class="party-card layout-center next-far" style="padding-top: 120px; background-image: url('background-slide5.png');" data-index="4">
+                    <div class="asset-placeholder" data-label="dekorasi-04.png" data-size="512x512" style="width: 280px; height: 280px; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; opacity: 0.5; z-index: 1;"></div>
+                    
+                    <div style="position: relative; z-index: 10; max-width: 300px; width: 90%; background: rgba(15, 15, 18, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.4); padding: 30px 24px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.1);">
+                        <img src="sparkles.png" alt="" style="width: 45px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 12px rgba(212,175,55,0.6));" class="interact-obj">
+                        <p style="font-size: 16px; color: #FFFFFF; margin-bottom: 16px; font-weight: 600; line-height: 1.5; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                            Hadiahnya, kami hanya menerima melalui <span class="gold-text" style="font-weight: 800; font-size: 17px; text-shadow: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">amplop atau QR</span> yaa. ✨
+                        </p>
+                        <div style="width: 40px; height: 1px; background: rgba(212,175,55,0.3); margin: 0 auto 16px auto;"></div>
+                        <p style="font-size: 13.5px; color: #E0E0E0; line-height: 1.6; font-weight: 400;">
+                            Mohon maaf, kami <strong style="color: #fff; font-weight: 600;">tidak menerima</strong> hadiah berupa barang.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- PAGE 6: POSTER LOCATION -->
+                <section class="party-card layout-poster next-far" data-index="5" style="background-image: url('background-slide6.png');">
+                    <div class="asset-placeholder" data-label="dekorasi-05.png" data-size="512x512" style="width: 190px; height: 190px; bottom: 80px; left: -10px; z-index: 1;"></div>
+                    
+                    <div style="position: relative; z-index: 10; width: 100%;">
+                        <p style="font-size: 12px; letter-spacing: 3px; color: var(--gold-primary); margin-bottom: 15px;">VENUE</p>
+                        <h2 class="serif venue-title">Pondok<br>Rangi Resto</h2>
+                        <p style="color: var(--text-dim); font-size: 15px; margin-bottom: 40px;">Rawasari</p>
+                        
+                        <a href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x2e69f5abae149179:0x25e0fd0baabdde63?entry=s&sa=X&ved=2ahUKEwiU-s_m276WAxUVk-EIHcbyJW8Q4kB6BAgcEAA&hl=en" target="_blank" class="btn-luxe interact-obj" id="btn-map">
+                            VIEW ON MAPS &rarr;
+                        </a>
+                    </div>
+                </section>
+
+                <!-- PAGE 7: FINAL CELEBRATION -->
+                <section class="party-card layout-center next-far" data-index="6" style="background-image: url('background-slide7.png');">
+                    <div class="asset-placeholder" data-label="dekorasi-06.png" data-size="800x500" style="width: 100%; height: 280px; top: 20px; left: 0; z-index: 1;"></div>
+                    
+                    <div style="position: relative; z-index: 10;">
+                        <img src="toast-glass.png" alt="" style="width: 90px; margin: 0 auto 40px auto;" class="interact-obj">
+                        
+                        <p style="font-style: italic; font-weight: 300; line-height: 1.6; margin-bottom: 20px; font-size: 15px;">
+                            "Yang penting datang, karena kehadiran kalian yang bikin malam ini makin seru."
+                        </p>
+                        
+                        <p style="font-size: 13px; color: rgba(255, 255, 255, 0.85); line-height: 1.6; margin-bottom: 40px; font-weight: 400;">
+                            Bagi yang belum bisa hadir, kabari minimal <span class="gold-text" style="font-weight: 800; font-size: 20px; letter-spacing: 1px; text-shadow: none; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));">H-5</span> sebelum acara ya...<br><br>
+                            <span style="font-weight: 600; font-size: 16px; color: #fff; font-style: italic;">See you there!</span>
+                        </p>
+                        
+                        <button class="btn-luxe interact-obj" id="btn-reveal" style="background: rgba(212, 175, 55, 0.2); border-color: var(--gold-primary);">
+                            LET'S PARTY <img src="sparkles.png" alt="" style="height: 1.2em; margin-left: 5px;">
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- WATERMARK: FLOW (SCROLL MODE) -->
+                <div class="watermark-flow-container">
+                    <a href="https://www.instagram.com/fadkun.10/" target="_blank" rel="noopener noreferrer" class="ig-watermark">
+                        Instagram · Fadkun.10
+                    </a>
+                </div>
+
+            </div>
+
+            <div id="tutorial-ui">
+                <div class="tut-anim">&larr;</div>
+                <div style="font-size: 11px; letter-spacing: 2px; color: var(--gold-primary); white-space: nowrap; font-weight: 700;">GESER UNTUK LANJUT</div>
+                <div class="tut-anim">&rarr;</div>
+            </div>
+
+            <!-- MASCOT OVERLAY (Fixed within Phone Canvas) -->
+            <div id="overlay-layer">
+                <!-- Menghapus atribut onerror yang menyembunyikan gambar secara paksa -->
+                <img src="maskot.png" alt="Host" id="mascot-host">
+                <div id="speech-bubble"></div>
+            </div>
+            
+        </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('starfield');
-            const ctx = canvas.getContext('2d');
-            const container = document.getElementById('app-container');
             
-            let width, height, centerX, centerY;
-            const stars = [];
-            const numStars = 400; // Optimal balance for performance and visuals
-            
-            // Animation States
-            let isWarping = false;
-            let speedMultiplier = 0.5; // Idle speed
-            let targetSpeedMultiplier = 0.5;
-
-            // Setup Canvas size based on container
-            function resize() {
-                width = container.clientWidth;
-                height = container.clientHeight;
-                canvas.width = width;
-                canvas.height = height;
-                centerX = width / 2;
-                centerY = height / 2;
-            }
-
-            window.addEventListener('resize', resize);
-            resize();
-
-            // Star Object
-            class Star {
-                constructor() {
-                    this.reset(true);
+            // --- ASSET PLACEHOLDER AUTO-LOADER BUG FIX ---
+            // Memuat file dekorasi secara otomatis sesuai dengan data-label.
+            document.querySelectorAll('.asset-placeholder').forEach(placeholder => {
+                const filename = placeholder.getAttribute('data-label');
+                if(filename) {
+                    const img = new Image();
+                    img.onload = () => {
+                        placeholder.style.backgroundImage = `url('${filename}')`;
+                        placeholder.classList.add('is-loaded');
+                    };
+                    img.src = filename; // Eksekusi load image
                 }
+            });
 
-                reset(randomZ = false) {
-                    this.x = (Math.random() - 0.5) * width * 2;
-                    this.y = (Math.random() - 0.5) * height * 2;
-                    // Distribute initially, or spawn far away when resetting during animation
-                    this.z = randomZ ? Math.random() * 1000 : 1000;
-                    this.pz = this.z; // Previous Z for drawing streaks
+            // --- BACKGROUND MUSIC SYSTEM ---
+            const bgMusic = document.getElementById('bg-music');
+            
+            // Browser modern sering memblokir autoplay jika belum ada interaksi user.
+            // Fungsi ini menjamin lagu langsung berputar saat user menyentuh/klik layar pertama kali.
+            const tryPlayMusic = () => {
+                if (bgMusic.paused) {
+                    bgMusic.play().catch(() => {
+                        // Abaikan error jika masih terblokir
+                    });
+                }
+            };
+            document.body.addEventListener('pointerdown', tryPlayMusic, { once: true });
+            document.body.addEventListener('touchstart', tryPlayMusic, { once: true });
+            document.body.addEventListener('click', tryPlayMusic, { once: true });
+
+            // Elements
+            const appWrapper = document.getElementById('desktop-wrapper');
+            const phoneApp = document.getElementById('phone-app');
+            const cards = Array.from(document.querySelectorAll('.party-card'));
+            const totalCards = cards.length;
+            const loader = document.getElementById('loader');
+            const tutorialUI = document.getElementById('tutorial-ui');
+            const flash = document.getElementById('flash-bang');
+            const bgLayer = document.getElementById('main-bg');
+            
+            // Coordinate System Base
+            const APP_WIDTH = 390;
+            const APP_HEIGHT = 844;
+            
+            let currentIndex = 0;
+            let isScrollMode = false;
+            let hasSwiped = false;
+
+            cards.forEach((card, idx) => {
+                // Clear inline style to allow dynamic BG layer to handle it
+                card.style.backgroundImage = 'none'; 
+                
+                const slideNum = idx + 1;
+                const pngPath = `background-slide${slideNum}.png`;
+                const mp4Path = `background-slide${slideNum}.mp4`;
+                const fallbackPath = `background.png`;
+
+                const bgContainer = document.createElement('div');
+                bgContainer.className = 'slide-bg-layer';
+                // Insert as the absolute bottom layer of the card
+                card.insertBefore(bgContainer, card.firstChild);
+
+                const imgTester = new Image();
+                imgTester.onload = () => {
+                    // PNG exists, use it
+                    bgContainer.style.backgroundImage = `url('${pngPath}')`;
+                    bgContainer.style.backgroundSize = 'cover';
+                    bgContainer.style.backgroundPosition = 'center';
+                };
+                imgTester.onerror = () => {
+                    // PNG not found, fallback to MP4
+                    const video = document.createElement('video');
+                    video.autoplay = true;
+                    video.muted = true;
+                    video.loop = true;
+                    video.playsInline = true;
                     
-                    // Add slight color variations (magical feel)
-                    const colors = ['#ffffff', '#e0f2fe', '#f0f9ff', '#ede9fe'];
-                    this.color = colors[Math.floor(Math.random() * colors.length)];
-                }
+                    video.onerror = () => {
+                       // MP4 also not found, use global fallback PNG
+                       bgContainer.style.backgroundImage = `url('${fallbackPath}')`;
+                       bgContainer.style.backgroundSize = 'cover';
+                       bgContainer.style.backgroundPosition = 'center';
+                       video.remove();
+                    };
 
-                update() {
-                    this.pz = this.z;
-                    // Move star closer (decrease z)
-                    this.z -= (2 * speedMultiplier);
-
-                    // If star passes the camera, reset it far away
-                    if (this.z < 1) {
-                        this.reset();
-                        this.pz = this.z; // prevent drawing line across screen on reset
+                    video.src = mp4Path;
+                    bgContainer.appendChild(video);
+                    card.bgVideo = video; // Save reference for play/pause optimization
+                    
+                    // Pause if not the initial active slide to save CPU
+                    if (idx !== currentIndex && !isScrollMode) {
+                        video.pause();
                     }
+                };
+                imgTester.src = pngPath;
+            });
+
+            // --- VIRTUAL PHONE SCALING SYSTEM ---
+            function scaleApp() {
+                const winW = window.innerWidth;
+                const winH = window.innerHeight;
+                
+                // Calculate uniform scale to fit viewport (mostly for desktop/tablets or very small phones)
+                // On a typical phone, this scales the 390x844 box to fit the screen width, potentially leaving small letterboxing.
+                let scale = Math.min(winW / APP_WIDTH, winH / APP_HEIGHT);
+                
+                // If it's a mobile device (portrait), we might just scale by width to fill edge-to-edge
+                if (winH > winW) {
+                    scale = winW / APP_WIDTH; 
                 }
+                
+                // Apply transform
+                phoneApp.style.transform = `scale(${scale})`;
+            }
+            window.addEventListener('resize', scaleApp);
+            scaleApp(); // Init scale
 
-                draw() {
-                    // Projection math: x/z, y/z
-                    const fov = 300; // Field of view
-                    const px = (this.x / this.z) * fov + centerX;
-                    const py = (this.y / this.z) * fov + centerY;
+            // --- MASCOT SYSTEM ---
+            const mascot = {
+                host: document.getElementById('mascot-host'),
+                bubble: document.getElementById('speech-bubble'),
+                timer: null,
+                
+                say(text, duration = 4000) {
+                    clearTimeout(this.timer);
+                    this.bubble.classList.remove('visible');
                     
-                    const ppx = (this.x / this.pz) * fov + centerX;
-                    const ppy = (this.y / this.pz) * fov + centerY;
+                    setTimeout(() => {
+                        this.bubble.textContent = text;
+                        this.bubble.classList.add('visible');
+                        
+                        // Micro-interaction bounce
+                        this.host.style.transform = 'scale(1.05) translateY(-5px)';
+                        setTimeout(() => this.host.style.transform = '', 200);
 
-                    // Calculate opacity based on depth
-                    const opacity = Math.min(1, (1000 - this.z) / 500);
-                    
-                    ctx.strokeStyle = this.color;
-                    ctx.globalAlpha = opacity;
-                    
-                    if (isWarping) {
-                        // Draw streaks during warp
-                        ctx.lineWidth = Math.max(0.5, (1000 - this.z) / 300);
-                        ctx.beginPath();
-                        ctx.moveTo(ppx, ppy);
-                        ctx.lineTo(px, py);
-                        ctx.stroke();
+                        if (duration > 0) {
+                            this.timer = setTimeout(() => this.bubble.classList.remove('visible'), duration);
+                        }
+                    }, 250); // slight delay for smooth transition
+                },
+
+                setPosition(pos) {
+                    // pos: 'left' or 'right'
+                    phoneApp.classList.remove('mascot-pos-left', 'mascot-pos-right', 'mascot-hidden');
+                    if (pos) {
+                        phoneApp.classList.add(`mascot-pos-${pos}`);
                     } else {
-                        // Draw subtle dots/short streaks during idle
-                        const size = Math.max(0.5, (1000 - this.z) / 500);
-                        ctx.beginPath();
-                        ctx.arc(px, py, size, 0, Math.PI * 2);
-                        ctx.fillStyle = this.color;
-                        ctx.fill();
+                        phoneApp.classList.add('mascot-hidden');
                     }
                 }
+            };
+
+            // Mascot interactivity (Tap)
+            mascot.host.addEventListener('click', (e) => {
+                mascot.say(["Jangan ditekan terus dong 😭", "Fokus ke undangannya! 👀", "Geser kartunya gih."][Math.floor(Math.random() * 3)], 3000);
+            });
+
+            // --- PRELOADER & OPENING ---
+            const priorityAssets = ['background.png', 'maskot.png', 'foto-orang.png'];
+            let loaded = 0;
+            const initOpening = () => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    updateCards();
+                    
+                    // Initial Mascot Greeting
+                    mascot.setPosition('right');
+                    mascot.say("Hai! Aku yang bakal nemenin kamu malam ini.", 3500);
+                    
+                    // Tampilkan panduan visual (geser) langsung sejak awal masuk
+                    if(!hasSwiped && !isScrollMode) {
+                        tutorialUI.classList.add('visible');
+                    }
+                    
+                    // Maskot memberikan pengingat lewat teks jika setelah 4 detik belum digeser
+                    setTimeout(() => {
+                        if(!hasSwiped && !isScrollMode) {
+                            mascot.say("Geser ke kiri atau kanan buat lanjut ya.", 5000);
+                        }
+                    }, 4000);
+                }, 800);
+            };
+
+            priorityAssets.forEach(src => {
+                const img = new Image();
+                img.onload = img.onerror = () => { loaded++; if(loaded === priorityAssets.length) initOpening(); };
+                img.src = src;
+            });
+            setTimeout(initOpening, 5000); // Fallback
+
+            // --- UNIFIED DRAG/SWIPE SYSTEM (Touch + Mouse) ---
+            let startX = 0, startY = 0, currentX = 0;
+            let isDragging = false;
+            let dragStartTime = 0;
+            
+            // We listen on the phone-app to capture all movements within the virtual canvas
+            phoneApp.addEventListener('pointerdown', e => {
+                if (isScrollMode || e.target.closest('a, button, .interact-obj, #mascot-host')) return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                dragStartTime = Date.now();
+                phoneApp.setPointerCapture(e.pointerId);
+                cards[currentIndex].classList.add('is-dragging');
+            });
+
+            phoneApp.addEventListener('pointermove', e => {
+                if (!isDragging || isScrollMode) return;
+                
+                // Calculate delta based on viewport, but we scale it to match virtual canvas feel
+                const scale = phoneApp.getBoundingClientRect().width / APP_WIDTH;
+                const deltaX = (e.clientX - startX) / scale;
+                const deltaY = (e.clientY - startY) / scale;
+                
+                // If moving mostly vertical, ignore horizontal drag (allow standard behaviors if any)
+                if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 20) {
+                   // Let it be, but we don't pan card horizontally
+                } else {
+                    currentX = deltaX;
+                    // Visual resistance feedback
+                    let panX = currentX * 0.8;
+                    let rotateY = panX * 0.05; 
+                    cards[currentIndex].style.transform = `translate3d(${panX}px, 0, 0) rotateY(${rotateY}deg)`;
+                }
+            });
+
+            phoneApp.addEventListener('pointerup', e => {
+                if (!isDragging || isScrollMode) return;
+                isDragging = false;
+                phoneApp.releasePointerCapture(e.pointerId);
+                
+                cards[currentIndex].classList.remove('is-dragging');
+                cards[currentIndex].style.transform = ''; // Reset inline style, let CSS transition take over
+                
+                const dragDuration = Date.now() - dragStartTime;
+                const velocity = Math.abs(currentX) / dragDuration;
+                
+                // Thresholds: drag > 80px OR fast flick
+                if (Math.abs(currentX) > 80 || velocity > 0.5) {
+                    if (currentX < 0) goTo(currentIndex + 1); // Drag left -> Next
+                    else goTo(currentIndex - 1); // Drag right -> Prev
+                }
+                currentX = 0;
+            });
+
+            // --- KEYBOARD SUPPORT (Desktop) ---
+            window.addEventListener('keydown', e => {
+                if (isScrollMode) return;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentIndex + 1);
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(currentIndex - 1);
+                if (e.key === 'Enter' && currentIndex === totalCards - 1) {
+                    document.getElementById('btn-reveal').click();
+                }
+            });
+
+            // --- NAVIGATION & STORYTELLING ---
+            function goTo(index) {
+                if (index < 0 || index >= totalCards || isScrollMode) return;
+                currentIndex = index;
+                hasSwiped = true;
+                tutorialUI.classList.remove('visible'); // Hide forever
+                
+                updateCards();
+                handleStory(currentIndex);
+                
+                // Subtle bg shift
+                bgLayer.style.transform = `scale(1.05) translateX(${currentIndex * -3}%)`;
             }
 
-            // Initialize Stars
-            for (let i = 0; i < numStars; i++) {
-                stars.push(new Star());
-            }
-
-            // Animation Loop
-            function animate() {
-                // Smooth speed transition
-                speedMultiplier += (targetSpeedMultiplier - speedMultiplier) * 0.05;
-
-                ctx.fillStyle = 'rgba(5, 5, 8, 0.3)'; // Trail effect
-                ctx.fillRect(0, 0, width, height);
-
-                stars.forEach(star => {
-                    star.update();
-                    star.draw();
+            function updateCards() {
+                cards.forEach((card, idx) => {
+                    card.classList.remove('active', 'prev', 'next', 'next-far');
+                    if (idx === currentIndex) {
+                        card.classList.add('active');
+                        // Play video when slide becomes active
+                        if (card.bgVideo && !isScrollMode) card.bgVideo.play().catch(()=>{});
+                    }
+                    else {
+                        if (idx < currentIndex) card.classList.add('prev');
+                        else if (idx === currentIndex + 1) card.classList.add('next');
+                        else card.classList.add('next-far');
+                        
+                        // Pause video when slide is inactive to save battery/CPU
+                        if (card.bgVideo && !isScrollMode) card.bgVideo.pause();
+                    }
                 });
-
-                requestAnimationFrame(animate);
-            }
-            animate();
-
-            const startBtn = document.getElementById('start-btn');
-            const welcomeScene = document.getElementById('welcome-scene');
-            const readyText = document.getElementById('ready-text');
-            const appContainer = document.getElementById('app-container');
-            const whiteFlash = document.getElementById('white-flash');
-            const openSound = document.getElementById('open-sound');
-            const watermark = document.querySelector('.watermark');
-
-            let isTransitioning = false;
-
-            function startCinematicSequence() {
-                if (isTransitioning) return;
-                isTransitioning = true;
-
-                // 0. Memutar audio open.mp3 (1x)
-                if (openSound) {
-                    openSound.currentTime = 0;
-                    openSound.play().catch(e => console.log("Audio play diizinkan oleh browser setelah klik:", e));
-                }
-
-                // 1. CLICK: Fade out content immediately
-                welcomeScene.classList.add('hidden');
-
-                // 2. READY: Show brief text
-                setTimeout(() => {
-                    readyText.classList.add('show');
-                }, 500);
-
-                setTimeout(() => {
-                    readyText.classList.remove('show');
-                    readyText.classList.add('fade');
-                    // Watermark memudar bersamaan dengan teks "READY?"
-                    if (watermark) watermark.classList.add('hidden');
-                }, 1300);
-
-                // 3. DOOR OPENS
-                setTimeout(() => {
-                    appContainer.classList.add('doors-open');
-                }, 1600);
-
-                // 4. STARFIELD FLY FORWARD (Hyperspace)
-                setTimeout(() => {
-                    isWarping = true;
-                    targetSpeedMultiplier = 25; // Accelerate massively
-                }, 2000);
-
-                // 5. EVERYTHING TURNS WHITE
-                setTimeout(() => {
-                    whiteFlash.classList.add('active');
-                    targetSpeedMultiplier = 50; // Final burst of speed
-                }, 3800);
-
-                // 6. REDIRECT to undangan.html
-                setTimeout(() => {
-                    // Redirect using relative URL as strictly requested
-                    window.location.href = "undangan.html";
-                }, 4800); // Total transition time ~4.8 seconds
             }
 
-            // Event Listeners for Button
-            startBtn.addEventListener('click', startCinematicSequence);
-
-            // Accessibility: allow Enter/Space key to trigger button
-            startBtn.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    startCinematicSequence();
+            function handleStory(idx) {
+                switch(idx) {
+                    case 0: 
+                        mascot.setPosition('right'); 
+                        break;
+                    case 1: 
+                        mascot.setPosition('left'); 
+                        mascot.say("Yuk, masuk dulu. Malam ini spesial.", 3000); 
+                        break;
+                    case 2: 
+                        mascot.setPosition('right'); 
+                        mascot.say("Catat tanggalnya jangan sampai lupa ya 🗓️", 3000); 
+                        break;
+                    case 3: 
+                        mascot.setPosition('left'); 
+                        mascot.say("Dress code-nya hitam atau cokelat yaa.", 3000); 
+                        break;
+                    case 4: 
+                        mascot.setPosition('right'); 
+                        mascot.say("Nggak usah repot kado kok.", 3000); 
+                        break;
+                    case 5: 
+                        mascot.setPosition('left'); 
+                        mascot.say("Lokasinya di sini. Tinggal tap map-nya.", 0); 
+                        break;
+                    case 6: 
+                        mascot.setPosition('right'); 
+                        mascot.say("Oke, semuanya udah siap. Let's Party! ✨", 0); 
+                        break;
                 }
+            }
+
+            // Map interaction
+            document.getElementById('btn-map').addEventListener('click', (e) => {
+                if(!isScrollMode) {
+                    mascot.say("Gas cek lokasinya dulu 🚗", 3000);
+                }
+            });
+
+            // --- THE GRAND REVEAL (TRANSFORM TO VERTICAL SCROLL) ---
+            document.getElementById('btn-reveal').addEventListener('click', () => {
+                if (isScrollMode) return;
+                
+                flash.style.opacity = '1';
+                mascot.say("Scroll bebas ke atas dan bawah sekarang! 🪩", 5000);
+                
+                setTimeout(() => {
+                    isScrollMode = true;
+                    
+                    // Activate native scroll by altering the phone canvas
+                    phoneApp.classList.add('is-scroll-mode');
+                    
+                    // Make sure Mascot is in a default safe spot for scrolling
+                    mascot.setPosition('right');
+                    
+                    // Cleanup inline transforms that restricted normal flow
+                    cards.forEach(c => {
+                        c.style.transform = ''; 
+                        c.style.opacity = '';
+                        c.classList.remove('active', 'prev', 'next', 'next-far');
+                    });
+                    
+                    // Instantly scroll to top so user starts from Slide 1
+                    phoneApp.scrollTop = 0;
+                    
+                    flash.style.opacity = '0';
+                    
+                    // Set up Intersection Observer for scrolling feedback during final mode
+                    setupScrollObserver();
+                    
+                }, 800);
+            });
+
+            function setupScrollObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const card = entry.target;
+                        const idx = parseInt(card.dataset.index);
+                        
+                        // Video Play/Pause Management in Vertical Scroll Mode
+                        if (isScrollMode && card.bgVideo) {
+                            if (entry.isIntersecting) {
+                                card.bgVideo.play().catch(()=>{});
+                            } else {
+                                card.bgVideo.pause();
+                            }
+                        }
+
+                        // Mascot Dialogue Logic (Triggers when card is >= 60% visible)
+                        if (entry.isIntersecting && entry.intersectionRatio >= 0.6 && isScrollMode) {
+                            if(idx === 0) mascot.say("Balik ke awal lagi? 👀", 2500);
+                            if(idx === 3) mascot.say("Outfit-nya dipersiapkan ya! ✨", 2500);
+                            if(idx === 5) mascot.say("Jangan kesasar lokasinya 😆", 2500);
+                        }
+                    });
+                }, { 
+                    root: phoneApp, 
+                    // Array threshold: 0 for video play/pause trigger, 0.6 for dialogue trigger
+                    threshold: [0, 0.6] 
+                });
+                cards.forEach(c => observer.observe(c));
+            }
+
+            // Fun Object Interactions (Micro-interactions)
+            document.querySelectorAll('.interact-obj').forEach(obj => {
+                obj.addEventListener('click', (e) => {
+                    e.target.style.transform = `scale(1.2) rotate(${(Math.random()-0.5)*30}deg)`;
+                    setTimeout(() => e.target.style.transform = '', 300);
+                });
             });
         });
     </script>
