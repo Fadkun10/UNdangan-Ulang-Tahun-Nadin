@@ -380,6 +380,12 @@
         @keyframes spinObj { to { transform: rotate(360deg); } }
         @keyframes fadeFromWhite { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
         
+        /* EFEK DEKORASI MELAYANG (ORGANIC FLOAT) */
+        @keyframes floatDecor {
+            0%, 100% { translate: 0px 0px; }
+            50% { translate: 0px -12px; }
+        }
+        
         /* INSTAGRAM WATERMARK PATCH */
         .ig-watermark {
             color: rgba(255, 255, 255, 0.5);
@@ -623,6 +629,15 @@
                     }
                     img.src = filename;
                 }
+            });
+
+            // --- ORGANIC FLOATING DECORATIONS ---
+            document.querySelectorAll('.asset-placeholder, img[src="discoball.png"], img[src="sparkles.png"], img[src="toast-glass.png"]').forEach(el => {
+                // Lewati ikon kilauan kecil di dalam tombol "LET'S PARTY" agar tidak keluar jalur
+                if (el.style.height === '1.2em') return; 
+                
+                // Tambahkan animasi melayang dengan durasi dan delay acak agar bergerak tidak serempak (natural)
+                el.style.animation = `floatDecor ${(4 + Math.random() * 3).toFixed(2)}s ease-in-out infinite ${(Math.random() * -5).toFixed(2)}s`;
             });
 
             // --- BACKGROUND MUSIC SYSTEM ---
