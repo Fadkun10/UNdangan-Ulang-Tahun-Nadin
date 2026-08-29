@@ -128,6 +128,19 @@
             font-family: monospace; font-size: 9px; color: var(--gold-primary);
             text-align: center; opacity: 0.8;
         }
+        
+        /* ASSET LOADING BUG FIX: Hilangkan kotak & teks jika gambar berhasil dimuat */
+        .asset-placeholder.is-loaded {
+            border: none !important;
+            background-color: transparent !important;
+            background-size: contain !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+        .asset-placeholder.is-loaded::before,
+        .asset-placeholder.is-loaded::after {
+            display: none !important;
+        }
 
         #card-container {
             position: absolute;
@@ -443,7 +456,8 @@
                 <section class="party-card layout-center active" data-index="0" style="background-image: url('background-slide1.png');">
                     <div class="asset-placeholder" data-label="dekorasi-01.png" data-size="512x512" style="width: 200px; height: 200px; top: -30px; right: -30px; transform: rotate(15deg); z-index: 1;"></div>
                     
-                    <img src="discoball.png" alt="" style="width: 80px; margin: 0 auto; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2)); position: relative; z-index: 10;" class="interact-obj">
+                    <!-- DEBUG PATCH: onerror logs ditambahkan pada elemen img agar terdeteksi jika file hilang -->
+                    <img src="discoball.png" alt="" style="width: 80px; margin: 0 auto; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2)); position: relative; z-index: 10;" class="interact-obj" onerror="console.error('[ASSET ERROR] Gagal memuat: discoball.png (Periksa case-sensitive dan lokasi folder)')">
                     
                     <h1 class="serif gold-text huge-title relative z-10">BIRTHDAY<br>NIGHT</h1>
                     <p style="color: var(--text-dim); font-size: 12px; letter-spacing: 4px; text-transform: uppercase; position: relative; z-index: 10;">Premium Experience</p>
@@ -458,7 +472,7 @@
                     <h2 class="serif" style="font-size: 50px; color: rgba(255,255,255,0.08); position: absolute; top: 40px; left: 20px;">CELEBRATE</h2>
                     
                     <div class="hero-photo">
-                        <img src="foto-orang.png" alt="Birthday Person" onerror="this.style.opacity=0">
+                        <img src="foto-orang.png" alt="Birthday Person" onerror="console.error('[ASSET ERROR] Gagal memuat: foto-orang.png')">
                     </div>
                     
                     <div class="text-overlap">
@@ -495,17 +509,17 @@
                 <section class="party-card layout-fashion next-far" data-index="3" style="background-image: url('background-slide4.png');">
                     <div class="asset-placeholder" data-label="dekorasi-03.png" data-size="600x800" style="width: 180px; height: 240px; top: 50%; right: -20px; transform: translateY(-50%); z-index: 1;"></div>
                     
-                    <div style="position: relative; z-index: 10;">
+                    <div style="position: relative; z-index: 10; margin-top: -50px;">
                         <h2 class="serif gold-text" style="font-size: 44px; line-height: 1;">DRESS<br>CODE</h2>
                         <p style="font-size: 14px; color: var(--text-dim); margin-top: 15px;">Bring your best club look.</p>
                         
                         <div class="dress-row">
                             <div class="dress-box interact-obj" style="background: #0a0a0a; color: #fff;">
-                                <img src="heart-black.png" alt="">
+                                <img src="heart-black.png" alt="" onerror="console.error('[ASSET ERROR] Gagal memuat: heart-black.png')">
                                 <span>ATASAN<br>HITAM</span>
                             </div>
                             <div class="dress-box interact-obj" style="background: linear-gradient(135deg, #F3E5D8 0%, #D8BE7D 100%); color: #2c241b;">
-                                <img src="heart-cream.png" alt="">
+                                <img src="heart-cream.png" alt="" onerror="console.error('[ASSET ERROR] Gagal memuat: heart-cream.png')">
                                 <span style="line-height: 1.3;">BAWAHAN<br><span style="font-size: 11px; font-weight: 800; letter-spacing: 1px;">CREAM / GOLD</span></span>
                             </div>
                         </div>
@@ -517,7 +531,7 @@
                     <div class="asset-placeholder" data-label="dekorasi-04.png" data-size="512x512" style="width: 280px; height: 280px; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; opacity: 0.5; z-index: 1;"></div>
                     
                     <div style="position: relative; z-index: 10; max-width: 300px; width: 90%; background: rgba(15, 15, 18, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.4); padding: 30px 24px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.1);">
-                        <img src="sparkles.png" alt="" style="width: 45px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 12px rgba(212,175,55,0.6));" class="interact-obj">
+                        <img src="sparkles.png" alt="" style="width: 45px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 12px rgba(212,175,55,0.6));" class="interact-obj" onerror="console.error('[ASSET ERROR] Gagal memuat: sparkles.png')">
                         <p style="font-size: 16px; color: #FFFFFF; margin-bottom: 16px; font-weight: 600; line-height: 1.5; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
                             Hadiahnya, kami hanya menerima melalui <span class="gold-text" style="font-weight: 800; font-size: 17px; text-shadow: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">amplop atau QR</span> yaa. ✨
                         </p>
@@ -548,7 +562,7 @@
                     <div class="asset-placeholder" data-label="dekorasi-06.png" data-size="800x500" style="width: 100%; height: 280px; top: 20px; left: 0; z-index: 1;"></div>
                     
                     <div style="position: relative; z-index: 10;">
-                        <img src="toast-glass.png" alt="" style="width: 90px; margin: 0 auto 40px auto;" class="interact-obj">
+                        <img src="toast-glass.png" alt="" style="width: 90px; margin: 0 auto 40px auto;" class="interact-obj" onerror="console.error('[ASSET ERROR] Gagal memuat: toast-glass.png')">
                         
                         <p style="font-style: italic; font-weight: 300; line-height: 1.6; margin-bottom: 20px; font-size: 15px;">
                             "Yang penting datang, karena kehadiran kalian yang bikin malam ini makin seru."
@@ -560,7 +574,7 @@
                         </p>
                         
                         <button class="btn-luxe interact-obj" id="btn-reveal" style="background: rgba(212, 175, 55, 0.2); border-color: var(--gold-primary);">
-                            LET'S PARTY <img src="sparkles.png" alt="" style="height: 1.2em; margin-left: 5px;">
+                            LET'S PARTY <img src="sparkles.png" alt="" style="height: 1.2em; margin-left: 5px;" onerror="console.error('[ASSET ERROR] Gagal memuat: sparkles.png')">
                         </button>
                     </div>
                 </section>
@@ -582,7 +596,7 @@
 
             <!-- MASCOT OVERLAY (Fixed within Phone Canvas) -->
             <div id="overlay-layer">
-                <img src="maskot.png" alt="Host" id="mascot-host" onerror="this.style.opacity=0">
+                <img src="maskot.png" alt="Host" id="mascot-host" onerror="console.error('[ASSET ERROR] Gagal memuat: maskot.png')">
                 <div id="speech-bubble"></div>
             </div>
             
@@ -592,16 +606,32 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            // --- ASSET PLACEHOLDER AUTO-LOADER BUG FIX ---
+            document.querySelectorAll('.asset-placeholder').forEach(placeholder => {
+                const filename = placeholder.getAttribute('data-label');
+                if(filename) {
+                    // DEBUG FIX: Set background URL immediately.
+                    // Ini mencegah placeholder kosong jika browser memblokir JavaScript Image object secara lokal.
+                    placeholder.style.backgroundImage = `url('${filename}')`;
+                    
+                    const img = new Image();
+                    img.onload = () => {
+                        placeholder.classList.add('is-loaded');
+                        console.log(`[ASSET OK] Dekorasi berhasil dimuat: ${filename}`);
+                    };
+                    img.onerror = () => {
+                        console.error(`[ASSET ERROR] Gagal memuat dekorasi: ${filename}. Pastikan case-sensitive dan path benar.`);
+                    }
+                    img.src = filename;
+                }
+            });
+
             // --- BACKGROUND MUSIC SYSTEM ---
             const bgMusic = document.getElementById('bg-music');
             
-            // Browser modern sering memblokir autoplay jika belum ada interaksi user.
-            // Fungsi ini menjamin lagu langsung berputar saat user menyentuh/klik layar pertama kali.
             const tryPlayMusic = () => {
                 if (bgMusic.paused) {
-                    bgMusic.play().catch(() => {
-                        // Abaikan error jika masih terblokir
-                    });
+                    bgMusic.play().catch(() => {});
                 }
             };
             document.body.addEventListener('pointerdown', tryPlayMusic, { once: true });
@@ -626,9 +656,11 @@
             let isScrollMode = false;
             let hasSwiped = false;
 
+            // --- BACKGROUND LOADING BUG FIX ---
             cards.forEach((card, idx) => {
-                // Clear inline style to allow dynamic BG layer to handle it
-                card.style.backgroundImage = 'none'; 
+                // DEBUG FIX: Sebelumnya ada kode "card.style.backgroundImage = 'none';" di sini
+                // Kode tersebut dihapus agar browser secara otomatis dan aman me-load PNG dari inline-style HTML.
+                // JS ini hanya digunakan untuk sistem fallback jika file PNG gagal dimuat.
                 
                 const slideNum = idx + 1;
                 const pngPath = `background-slide${slideNum}.png`;
@@ -642,12 +674,12 @@
 
                 const imgTester = new Image();
                 imgTester.onload = () => {
-                    // PNG exists, use it
-                    bgContainer.style.backgroundImage = `url('${pngPath}')`;
-                    bgContainer.style.backgroundSize = 'cover';
-                    bgContainer.style.backgroundPosition = 'center';
+                    // PNG exists. HTML inline style already handles displaying it natively.
+                    console.log(`[ASSET OK] Background berhasil dimuat: ${pngPath}`);
                 };
                 imgTester.onerror = () => {
+                    console.warn(`[ASSET WARN] ${pngPath} tidak ditemukan, mencoba MP4: ${mp4Path}`);
+                    
                     // PNG not found, fallback to MP4
                     const video = document.createElement('video');
                     video.autoplay = true;
@@ -656,18 +688,16 @@
                     video.playsInline = true;
                     
                     video.onerror = () => {
+                       console.error(`[ASSET ERROR] ${mp4Path} juga tidak ada. Menggunakan fallback: ${fallbackPath}`);
                        // MP4 also not found, use global fallback PNG
-                       bgContainer.style.backgroundImage = `url('${fallbackPath}')`;
-                       bgContainer.style.backgroundSize = 'cover';
-                       bgContainer.style.backgroundPosition = 'center';
+                       card.style.backgroundImage = `url('${fallbackPath}')`;
                        video.remove();
                     };
 
                     video.src = mp4Path;
                     bgContainer.appendChild(video);
-                    card.bgVideo = video; // Save reference for play/pause optimization
+                    card.bgVideo = video; 
                     
-                    // Pause if not the initial active slide to save CPU
                     if (idx !== currentIndex && !isScrollMode) {
                         video.pause();
                     }
@@ -680,20 +710,16 @@
                 const winW = window.innerWidth;
                 const winH = window.innerHeight;
                 
-                // Calculate uniform scale to fit viewport (mostly for desktop/tablets or very small phones)
-                // On a typical phone, this scales the 390x844 box to fit the screen width, potentially leaving small letterboxing.
                 let scale = Math.min(winW / APP_WIDTH, winH / APP_HEIGHT);
                 
-                // If it's a mobile device (portrait), we might just scale by width to fill edge-to-edge
                 if (winH > winW) {
                     scale = winW / APP_WIDTH; 
                 }
                 
-                // Apply transform
                 phoneApp.style.transform = `scale(${scale})`;
             }
             window.addEventListener('resize', scaleApp);
-            scaleApp(); // Init scale
+            scaleApp();
 
             // --- MASCOT SYSTEM ---
             const mascot = {
@@ -709,18 +735,16 @@
                         this.bubble.textContent = text;
                         this.bubble.classList.add('visible');
                         
-                        // Micro-interaction bounce
                         this.host.style.transform = 'scale(1.05) translateY(-5px)';
                         setTimeout(() => this.host.style.transform = '', 200);
 
                         if (duration > 0) {
                             this.timer = setTimeout(() => this.bubble.classList.remove('visible'), duration);
                         }
-                    }, 250); // slight delay for smooth transition
+                    }, 250); 
                 },
 
                 setPosition(pos) {
-                    // pos: 'left' or 'right'
                     phoneApp.classList.remove('mascot-pos-left', 'mascot-pos-right', 'mascot-hidden');
                     if (pos) {
                         phoneApp.classList.add(`mascot-pos-${pos}`);
@@ -730,7 +754,6 @@
                 }
             };
 
-            // Mascot interactivity (Tap)
             mascot.host.addEventListener('click', (e) => {
                 mascot.say(["Jangan ditekan terus dong 😭", "Fokus ke undangannya! 👀", "Geser kartunya gih."][Math.floor(Math.random() * 3)], 3000);
             });
@@ -744,16 +767,13 @@
                     loader.style.display = 'none';
                     updateCards();
                     
-                    // Initial Mascot Greeting
                     mascot.setPosition('right');
                     mascot.say("Hai! Aku yang bakal nemenin kamu malam ini.", 3500);
                     
-                    // Tampilkan panduan visual (geser) langsung sejak awal masuk
                     if(!hasSwiped && !isScrollMode) {
                         tutorialUI.classList.add('visible');
                     }
                     
-                    // Maskot memberikan pengingat lewat teks jika setelah 4 detik belum digeser
                     setTimeout(() => {
                         if(!hasSwiped && !isScrollMode) {
                             mascot.say("Geser ke kiri atau kanan buat lanjut ya.", 5000);
@@ -764,17 +784,21 @@
 
             priorityAssets.forEach(src => {
                 const img = new Image();
-                img.onload = img.onerror = () => { loaded++; if(loaded === priorityAssets.length) initOpening(); };
+                img.onload = () => { loaded++; if(loaded === priorityAssets.length) initOpening(); };
+                img.onerror = () => { 
+                    console.error(`[ASSET ERROR] Gagal memuat priority asset: ${src}`);
+                    loaded++; // Tetap jalankan aplikasi meski gagal muat
+                    if(loaded === priorityAssets.length) initOpening(); 
+                };
                 img.src = src;
             });
-            setTimeout(initOpening, 5000); // Fallback
+            setTimeout(initOpening, 5000); 
 
             // --- UNIFIED DRAG/SWIPE SYSTEM (Touch + Mouse) ---
             let startX = 0, startY = 0, currentX = 0;
             let isDragging = false;
             let dragStartTime = 0;
             
-            // We listen on the phone-app to capture all movements within the virtual canvas
             phoneApp.addEventListener('pointerdown', e => {
                 if (isScrollMode || e.target.closest('a, button, .interact-obj, #mascot-host')) return;
                 isDragging = true;
@@ -788,17 +812,14 @@
             phoneApp.addEventListener('pointermove', e => {
                 if (!isDragging || isScrollMode) return;
                 
-                // Calculate delta based on viewport, but we scale it to match virtual canvas feel
                 const scale = phoneApp.getBoundingClientRect().width / APP_WIDTH;
                 const deltaX = (e.clientX - startX) / scale;
                 const deltaY = (e.clientY - startY) / scale;
                 
-                // If moving mostly vertical, ignore horizontal drag (allow standard behaviors if any)
                 if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 20) {
-                   // Let it be, but we don't pan card horizontally
+                   // Let it be vertical
                 } else {
                     currentX = deltaX;
-                    // Visual resistance feedback
                     let panX = currentX * 0.8;
                     let rotateY = panX * 0.05; 
                     cards[currentIndex].style.transform = `translate3d(${panX}px, 0, 0) rotateY(${rotateY}deg)`;
@@ -811,20 +832,19 @@
                 phoneApp.releasePointerCapture(e.pointerId);
                 
                 cards[currentIndex].classList.remove('is-dragging');
-                cards[currentIndex].style.transform = ''; // Reset inline style, let CSS transition take over
+                cards[currentIndex].style.transform = ''; 
                 
                 const dragDuration = Date.now() - dragStartTime;
                 const velocity = Math.abs(currentX) / dragDuration;
                 
-                // Thresholds: drag > 80px OR fast flick
                 if (Math.abs(currentX) > 80 || velocity > 0.5) {
-                    if (currentX < 0) goTo(currentIndex + 1); // Drag left -> Next
-                    else goTo(currentIndex - 1); // Drag right -> Prev
+                    if (currentX < 0) goTo(currentIndex + 1); 
+                    else goTo(currentIndex - 1); 
                 }
                 currentX = 0;
             });
 
-            // --- KEYBOARD SUPPORT (Desktop) ---
+            // --- KEYBOARD SUPPORT ---
             window.addEventListener('keydown', e => {
                 if (isScrollMode) return;
                 if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentIndex + 1);
@@ -839,12 +859,11 @@
                 if (index < 0 || index >= totalCards || isScrollMode) return;
                 currentIndex = index;
                 hasSwiped = true;
-                tutorialUI.classList.remove('visible'); // Hide forever
+                tutorialUI.classList.remove('visible'); 
                 
                 updateCards();
                 handleStory(currentIndex);
                 
-                // Subtle bg shift
                 bgLayer.style.transform = `scale(1.05) translateX(${currentIndex * -3}%)`;
             }
 
@@ -853,7 +872,6 @@
                     card.classList.remove('active', 'prev', 'next', 'next-far');
                     if (idx === currentIndex) {
                         card.classList.add('active');
-                        // Play video when slide becomes active
                         if (card.bgVideo && !isScrollMode) card.bgVideo.play().catch(()=>{});
                     }
                     else {
@@ -861,7 +879,6 @@
                         else if (idx === currentIndex + 1) card.classList.add('next');
                         else card.classList.add('next-far');
                         
-                        // Pause video when slide is inactive to save battery/CPU
                         if (card.bgVideo && !isScrollMode) card.bgVideo.pause();
                     }
                 });
@@ -869,44 +886,23 @@
 
             function handleStory(idx) {
                 switch(idx) {
-                    case 0: 
-                        mascot.setPosition('right'); 
-                        break;
-                    case 1: 
-                        mascot.setPosition('left'); 
-                        mascot.say("Yuk, masuk dulu. Malam ini spesial.", 3000); 
-                        break;
-                    case 2: 
-                        mascot.setPosition('right'); 
-                        mascot.say("Catat tanggalnya jangan sampai lupa ya 🗓️", 3000); 
-                        break;
-                    case 3: 
-                        mascot.setPosition('left'); 
-                        mascot.say("Dress code-nya hitam atau cokelat yaa.", 3000); 
-                        break;
-                    case 4: 
-                        mascot.setPosition('right'); 
-                        mascot.say("Nggak usah repot kado kok.", 3000); 
-                        break;
-                    case 5: 
-                        mascot.setPosition('left'); 
-                        mascot.say("Lokasinya di sini. Tinggal tap map-nya.", 0); 
-                        break;
-                    case 6: 
-                        mascot.setPosition('right'); 
-                        mascot.say("Oke, semuanya udah siap. Let's Party! ✨", 0); 
-                        break;
+                    case 0: mascot.setPosition('right'); break;
+                    case 1: mascot.setPosition('left'); mascot.say("Yuk, masuk dulu. Malam ini spesial.", 3000); break;
+                    case 2: mascot.setPosition('right'); mascot.say("Catat tanggalnya jangan sampai lupa ya 🗓️", 3000); break;
+                    case 3: mascot.setPosition('left'); mascot.say("Dress code-nya hitam atau cokelat yaa.", 3000); break;
+                    case 4: mascot.setPosition('right'); mascot.say("Nggak usah repot kado kok.", 3000); break;
+                    case 5: mascot.setPosition('left'); mascot.say("Lokasinya di sini. Tinggal tap map-nya.", 0); break;
+                    case 6: mascot.setPosition('right'); mascot.say("Oke, semuanya udah siap. Let's Party! ✨", 0); break;
                 }
             }
 
-            // Map interaction
             document.getElementById('btn-map').addEventListener('click', (e) => {
                 if(!isScrollMode) {
                     mascot.say("Gas cek lokasinya dulu 🚗", 3000);
                 }
             });
 
-            // --- THE GRAND REVEAL (TRANSFORM TO VERTICAL SCROLL) ---
+            // --- THE GRAND REVEAL ---
             document.getElementById('btn-reveal').addEventListener('click', () => {
                 if (isScrollMode) return;
                 
@@ -916,25 +912,17 @@
                 setTimeout(() => {
                     isScrollMode = true;
                     
-                    // Activate native scroll by altering the phone canvas
                     phoneApp.classList.add('is-scroll-mode');
-                    
-                    // Make sure Mascot is in a default safe spot for scrolling
                     mascot.setPosition('right');
                     
-                    // Cleanup inline transforms that restricted normal flow
                     cards.forEach(c => {
                         c.style.transform = ''; 
                         c.style.opacity = '';
                         c.classList.remove('active', 'prev', 'next', 'next-far');
                     });
                     
-                    // Instantly scroll to top so user starts from Slide 1
                     phoneApp.scrollTop = 0;
-                    
                     flash.style.opacity = '0';
-                    
-                    // Set up Intersection Observer for scrolling feedback during final mode
                     setupScrollObserver();
                     
                 }, 800);
@@ -946,7 +934,6 @@
                         const card = entry.target;
                         const idx = parseInt(card.dataset.index);
                         
-                        // Video Play/Pause Management in Vertical Scroll Mode
                         if (isScrollMode && card.bgVideo) {
                             if (entry.isIntersecting) {
                                 card.bgVideo.play().catch(()=>{});
@@ -955,7 +942,6 @@
                             }
                         }
 
-                        // Mascot Dialogue Logic (Triggers when card is >= 60% visible)
                         if (entry.isIntersecting && entry.intersectionRatio >= 0.6 && isScrollMode) {
                             if(idx === 0) mascot.say("Balik ke awal lagi? 👀", 2500);
                             if(idx === 3) mascot.say("Outfit-nya dipersiapkan ya! ✨", 2500);
@@ -964,13 +950,11 @@
                     });
                 }, { 
                     root: phoneApp, 
-                    // Array threshold: 0 for video play/pause trigger, 0.6 for dialogue trigger
                     threshold: [0, 0.6] 
                 });
                 cards.forEach(c => observer.observe(c));
             }
 
-            // Fun Object Interactions (Micro-interactions)
             document.querySelectorAll('.interact-obj').forEach(obj => {
                 obj.addEventListener('click', (e) => {
                     e.target.style.transform = `scale(1.2) rotate(${(Math.random()-0.5)*30}deg)`;
