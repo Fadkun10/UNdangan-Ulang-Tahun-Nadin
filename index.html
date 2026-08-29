@@ -367,6 +367,8 @@
 
         <!-- Audio element untuk efek sound (hanya diputar 1x saat tombol diklik) -->
         <audio id="open-sound" src="open.mp3" preload="auto"></audio>
+        <!-- Audio element untuk BGM (Looping) -->
+        <audio id="bg-music" src="music.mp3" loop preload="auto"></audio>
     </div>
 
     <script>
@@ -488,8 +490,17 @@
             const appContainer = document.getElementById('app-container');
             const whiteFlash = document.getElementById('white-flash');
             const openSound = document.getElementById('open-sound');
+            const bgMusic = document.getElementById('bg-music');
 
             let isTransitioning = false;
+
+            // Event listener: Ketika open.mp3 selesai diputar, langsung putar music.mp3
+            if (openSound && bgMusic) {
+                openSound.addEventListener('ended', () => {
+                    bgMusic.currentTime = 0;
+                    bgMusic.play().catch(e => console.log("BGM play error:", e));
+                });
+            }
 
             function startCinematicSequence() {
                 if (isTransitioning) return;
